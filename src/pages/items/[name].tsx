@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { items } from "../../utils/helpers";
 
 const ItemDetails: NextPage = () => {
+  function buy() {}
   const router = useRouter();
   const { name } = router.query;
   const item = items.find((item) => item.name == name);
@@ -115,7 +116,9 @@ const ItemDetails: NextPage = () => {
               <Heading size="2xl">${item.price}</Heading>
             </Box>
             <Box>
-              <Button width={"200px"}>Buy</Button>
+              <Button width={"200px"} onClick={() => buy()}>
+                Buy
+              </Button>
             </Box>
           </Box>
           <Box flexDir={"row"} display="flex" padding="20px">

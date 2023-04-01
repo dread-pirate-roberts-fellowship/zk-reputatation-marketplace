@@ -29,7 +29,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-yarn.lock
+yarn.lock*
 
 # local env files
 .env*.local
