@@ -15,10 +15,12 @@ import {
   Tabs,
   Text,
   useToast,
+  Icon,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { MdPerson } from "react-icons/md";
 import { Item } from "../components/Item";
 import { myListedItems, transactionItems } from "../utils/helpers";
 
@@ -29,31 +31,48 @@ const UserProfile: NextPage = () => {
       flex="1"
       display="flex"
       flexDir={"column"}
-      border="1px"
-      borderColor="#f0f0f0"
+      boxShadow={"dark-lg"}
+      padding="30px"
     >
       <Box
         flexDir={"row"}
-        overflowX="scroll"
-        display={"flex"}
-        justifyContent="flex-start"
-        backgroundColor={"green"}
+        display="flex"
+        width="100%"
+        justifyContent={"space-between"}
       >
-        <Heading>My listed Items</Heading>
-        {myListedItems.map((item, index) => (
-          <Item item={item} key={index} />
-        ))}
+        <Box flexDir={"row"} display="flex">
+          <Icon as={MdPerson} w={10} h={10} marginRight="10px" />
+          <Heading>Your profile</Heading>
+        </Box>
+        <Box>
+          <Button>List new item</Button>
+        </Box>
       </Box>
-      <Box
-        flexDir={"row"}
-        flexWrap="wrap"
-        display={"flex"}
-        justifyContent="space-between"
-      >
-        <Heading>My transaction history</Heading>
-        {transactionItems.map((item, index) => (
-          <Item item={item} key={index} />
-        ))}
+      <Box padding="10px">
+        {/* <Heading size={"md"}>My listed Items</Heading>
+        <Box
+          flexDir={"row"}
+          overflowX="scroll"
+          display={"flex"}
+          justifyContent="flex-start"
+        >
+          {myListedItems.map((item, index) => (
+            <Item item={item} key={index} />
+          ))}
+        </Box> */}
+        <Heading size={"md"} marginTop="10px">
+          Your transaction history
+        </Heading>
+        <Box
+          flexDir={"row"}
+          overflowX="scroll"
+          display={"flex"}
+          justifyContent="space-between"
+        >
+          {transactionItems.map((item, index) => (
+            <Item item={item} key={index} />
+          ))}
+        </Box>
       </Box>
     </Box>
   );

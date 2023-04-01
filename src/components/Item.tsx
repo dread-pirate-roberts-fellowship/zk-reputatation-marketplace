@@ -1,18 +1,79 @@
-import { Box, Button, Divider, Heading, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Divider,
+  Heading,
+  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  useDisclosure,
+  Icon,
+} from "@chakra-ui/react";
 import { useRouter } from "next/router";
+import { useState } from "react";
+import { MdStar, MdStarOutline } from "react-icons/md";
 import { itemType } from "../utils/types";
 
 export const Item = ({ item }: { item: itemType }) => {
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [review, setReview] = useState(0);
+  const [hoveredReview, setHoveredReview] = useState(0);
+
   return (
     <Box
-      border="1px"
-      borderColor="#f0f0f0"
+      boxShadow={"2xl"}
       margin="5"
       maxW="300px"
-      onClick={() => router.push("/items/" + item.name)}
-      cursor="pointer"
+      onClick={() => {
+        item.status == "open" && router.push("/items/" + item.name);
+      }}
+      cursor={item.status == "open" ? "pointer" : "default"}
     >
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Review purchase</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {[1, 2, 3, 4, 5].map((index) => (
+              <Icon
+                as={
+                  (hoveredReview == 0 && review >= index) ||
+                  hoveredReview >= index
+                    ? MdStar
+                    : MdStarOutline
+                }
+                h={7}
+                w={7}
+                onMouseEnter={() => setHoveredReview(index)}
+                onMouseLeave={() => setHoveredReview(0)}
+                onClick={() => setReview(index)}
+                cursor="pointer"
+              />
+            ))}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button>Review</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {item.status == "sold" ? (
+        <Text marginBottom={"5px"}>Sold:</Text>
+      ) : (
+        (item.status == "bought" || item.status == "reviewed") && (
+          <Text marginBottom={"5px"}>Bought:</Text>
+        )
+      )}
       <Image
         src={item.pic}
         alt="token"
@@ -43,6 +104,41 @@ export const Item = ({ item }: { item: itemType }) => {
           {item.long_desc}
         </Text>
       </Box>
+      {item.status == "bought" && (
+        <>
+          <Divider />
+          <Box
+            padding="10px"
+            flexDir={"row"}
+            display="flex"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Button onClick={onOpen}>Review now</Button>
+          </Box>{" "}
+        </>
+      )}
+      {item.status == "reviewed" && (
+        <>
+          <Divider />
+          <Box
+            padding="10px"
+            flexDir={"row"}
+            display="flex"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Text>Your review:</Text>
+            {[1, 2, 3, 4, 5].map((index) => (
+              <Icon
+                as={item.review! >= index ? MdStar : MdStarOutline}
+                h={5}
+                w={5}
+              />
+            ))}
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

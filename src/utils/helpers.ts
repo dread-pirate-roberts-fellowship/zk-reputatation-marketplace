@@ -60,6 +60,24 @@ export const myListedItems: itemType[] = [
     pic: "https://i.pinimg.com/originals/e5/77/12/e57712672fa515e441498f4539fe0f37.jpg",
     status: "open",
   },
+  {
+    reputationQuantity: 1000,
+    reputationQuality: 8,
+    price: 1000,
+    name: "Best item lfg",
+    long_desc: lorem,
+    pic: "https://i.pinimg.com/originals/e5/77/12/e57712672fa515e441498f4539fe0f37.jpg",
+    status: "open",
+  },
+  {
+    reputationQuantity: 1000,
+    reputationQuality: 8,
+    price: 1000,
+    name: "Best item lfg",
+    long_desc: lorem,
+    pic: "https://i.pinimg.com/originals/e5/77/12/e57712672fa515e441498f4539fe0f37.jpg",
+    status: "open",
+  },
 ];
 export const transactionItems: itemType[] = [
   {

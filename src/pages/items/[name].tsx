@@ -32,8 +32,7 @@ const ItemDetails: NextPage = () => {
         flex="1"
         display="flex"
         flexDir={"row"}
-        border="1px"
-        borderColor="#f0f0f0"
+        boxShadow={"dark-lg"}
       >
         <Box>
           <Box
