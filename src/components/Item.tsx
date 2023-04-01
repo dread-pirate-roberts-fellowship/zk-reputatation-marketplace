@@ -7,11 +7,10 @@ export const Item = ({ item }: { item: itemType }) => {
   return (
     <Box
       border="1px"
-      borderRadius={"5"}
-      borderColor="#808080"
+      borderColor="#f0f0f0"
       margin="5"
       maxW="300px"
-      onClick={() => router.push("/item/" + item.name)}
+      onClick={() => router.push("/items/" + item.name)}
       cursor="pointer"
     >
       <Image
