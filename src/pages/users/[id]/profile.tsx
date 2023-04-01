@@ -63,14 +63,14 @@ const userProfile: NextPage = () => {
               <Text textAlign={"right"}>Risk:</Text>
             </Box>
             <Box flexDir={"column"} marginLeft="5px">
-              <Text fontWeight={"bold"}>{item.reputationQuality * 100}%</Text>
-              <Text fontWeight={"bold"}>{item.reputationQuantity}</Text>
+              <Text fontWeight={"bold"}>{user.reputationQuality * 100}%</Text>
+              <Text fontWeight={"bold"}>{user.reputationQuantity}</Text>
             </Box>
           </Box>
           <Box flexDir={"row"} display="flex" padding="20px">
             <Box>
               <Heading size="md">Address</Heading>
-              <Text>{item.address}</Text>
+              <Text>{user.address}</Text>
             </Box>
           </Box>
         </Box>
