@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 
 const Header = dynamic(() => import("./Header"), {
   loading: () => <Spinner />,
+  ssr: false,
 });
 const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <Box>
+    <Box px="200px">
       <Header />
       <main>{children}</main>
     </Box>

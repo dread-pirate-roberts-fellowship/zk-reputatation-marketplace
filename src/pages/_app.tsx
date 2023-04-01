@@ -13,16 +13,6 @@ const UseInkProvider = dynamic(
 );
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [loading, setLoading] = useState(true);
-  // const [UseInkProvider, setUseInkProvider] = useState((<></>) as any);
-  // useEffect(() => {
-  //   async function init() {
-  //     setUseInkProvider((await import("useink")).default.UseInkProvider);
-  //     setLoading(false);
-  //   }
-  //   if (window) init();
-  // }, [typeof window !== "undefined"]);
-  // if (!loading)
   return (
     <UseInkProvider
       config={{

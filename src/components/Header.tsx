@@ -14,12 +14,6 @@ import { useExtension } from "useink";
 import { useRouter } from "next/router";
 import { shorten } from "../utils/networkHelpers";
 
-// const useExtensionSafe = () => {
-//   if (typeof window !== "undefined")
-//     return import("useink").then((def) => def.useExtension);
-//   else return null;
-// };
-
 const Header = () => {
   const router = useRouter();
   const { toggleColorMode } = useColorMode();
@@ -46,7 +40,6 @@ const Header = () => {
       <Box
         display="flex"
         justifyContent={"space-between"}
-        px="200px"
         height="75px"
         alignItems={"center "}
       >

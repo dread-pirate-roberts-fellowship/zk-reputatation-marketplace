@@ -1,0 +1,64 @@
+import { Box, Button, Divider, Heading, Image, Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { itemType } from "../utils/types";
+
+export const Item = ({ item }: { item: itemType }) => {
+  const router = useRouter();
+  return (
+    <Box
+      border="1px"
+      borderRadius={"5"}
+      borderColor="#808080"
+      margin="5"
+      maxW="300px"
+      onClick={() => router.push("/item/" + item.name)}
+      cursor="pointer"
+    >
+      <Image
+        src={item.pic}
+        alt="token"
+        display={"flex"}
+        flex="1"
+        objectFit={"cover"}
+      />
+      <Box
+        flexDir={"row"}
+        justifyContent="space-between"
+        display="flex"
+        padding="10px"
+        alignItems={"center"}
+      >
+        <Box flexDir={"column"} display="flex" flex="1">
+          <Text fontSize={"2xl"}>{item.name}</Text>
+          <Text>Price: ${item.price}</Text>
+        </Box>
+        {/* <Box flexDir={"row"} display="flex">
+          <Box flexDir={"column"}>
+            <Text textAlign={"right"}>Transaction Amount:</Text>
+            <Text textAlign={"right"}>Reputation:</Text>
+          </Box>
+          <Box flexDir={"column"} marginLeft="5px">
+            <Text fontWeight={"bold"}>{item.reputationQuantity}</Text>
+            <Text
+              fontWeight={"bold"}
+              textColor={item.reputationQuality > 7 ? "green" : "orange"}
+            >
+              {item.reputationQuality}
+            </Text>
+          </Box>
+        </Box> */}
+      </Box>
+      <Box
+        padding="10px"
+        flexDir={"row"}
+        display="flex"
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
+        <Text fontSize="12px" noOfLines={3} width="200px">
+          {item.long_desc}
+        </Text>
+      </Box>
+    </Box>
+  );
+};

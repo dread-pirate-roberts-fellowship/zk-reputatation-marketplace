@@ -1,8 +1,19 @@
 import { Box } from "@chakra-ui/react";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../../styles/Home.module.css";
+import { Item } from "../components/Item";
+import { items } from "../utils/helpers";
+import { itemType } from "../utils/types";
 
 export default function Home() {
-  return <Box>hi</Box>;
+  return (
+    <Box
+      flexDir={"row"}
+      flexWrap="wrap"
+      display={"flex"}
+      justifyContent="space-between"
+    >
+      {items.map((item, index) => (
+        <Item item={item} key={index} />
+      ))}
+    </Box>
+  );
 }
