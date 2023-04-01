@@ -84,15 +84,15 @@ mod marketplace {
                 users: Vec::new(),
                 assets: assets_list,
                 current_sale: init_sale,
-                //TODO: initialize spent_nullifier
                 commitments: BTreeSet::new(),
+                spent_nullifier: Mapping::new(),
             };
             mk
         }
 
         #[ink(message)]
         ///Register new seller
-        pub fn register_seller(&self, new_hash: Hash) {
+        pub fn register_seller(&mut self, new_hash: Hash) {
             self.commitments.insert(new_hash);
         }
 
@@ -117,6 +117,7 @@ mod marketplace {
             }
             self.env().emit_event(ItemOnsale { seller_id: account });
             // TODO: Add Result output
+            unimplemented!()
         }
 
         #[ink(message)]
@@ -133,8 +134,11 @@ mod marketplace {
             self.env().emit_event(ItemBought { seller_id: seller });
         }
 
+
         #[ink(message)]
-        pub fn update_seller_reputation(&self, hash: Hash, review_proof: Digest) {
+        pub fn update_seller_reputation(&self, hash: Hash, review_proof: [u32; 8]) {
+            let review_proof = Digest::from(review_proof);
+            unimplemented!()
             //TBD
         }
     }
