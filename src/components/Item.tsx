@@ -31,21 +31,6 @@ export const Item = ({ item }: { item: itemType }) => {
           <Text fontSize={"2xl"}>{item.name}</Text>
           <Text>Price: ${item.price}</Text>
         </Box>
-        {/* <Box flexDir={"row"} display="flex">
-          <Box flexDir={"column"}>
-            <Text textAlign={"right"}>Transaction Amount:</Text>
-            <Text textAlign={"right"}>Reputation:</Text>
-          </Box>
-          <Box flexDir={"column"} marginLeft="5px">
-            <Text fontWeight={"bold"}>{item.reputationQuantity}</Text>
-            <Text
-              fontWeight={"bold"}
-              textColor={item.reputationQuality > 7 ? "green" : "orange"}
-            >
-              {item.reputationQuality}
-            </Text>
-          </Box>
-        </Box> */}
       </Box>
       <Box
         padding="10px"

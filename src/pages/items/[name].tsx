@@ -35,7 +35,7 @@ const itemDetails: NextPage = () => {
         border="1px"
         borderColor="#f0f0f0"
       >
-        <Box backgroundColor="green">
+        <Box>
           <Box
             minW="400px"
             backgroundColor="blue"
@@ -62,30 +62,65 @@ const itemDetails: NextPage = () => {
           alignItems="center"
         >
           <Box
-            sx={{
-              position: "sticky",
-              top: "0",
-            }}
-            background="white"
+            width="100%"
+            flexDir={"row"}
+            display="flex"
+            flex="1"
+            justifyContent={"space-between"}
+            alignItems="center"
+          >
+            <Heading>{item.name}</Heading>
+          </Box>
+          <Box
+            flexDir={"row"}
+            display="flex"
+            alignItems={"center"}
+            border="1px"
+            borderColor="#f0f0f0"
+            margin="10px"
+            padding="10px"
+            justifyContent={"space-between"}
             width="100%"
           >
-            <Box flexDir={"row"} display="flex" flex="1">
-              <Box alignItems={"center"} display={"flex"}>
-                <Heading>{item.name}</Heading>
+            <Box>
+              <Heading size="s">About the seller:</Heading>
+            </Box>
+            <Box flexDir={"row"} display="flex">
+              <Box flexDir={"column"}>
+                <Text textAlign={"right"}>Transaction Amount:</Text>
+                <Text textAlign={"right"}>Reputation:</Text>
+              </Box>
+              <Box flexDir={"column"} marginLeft="5px">
+                <Text fontWeight={"bold"}>{item.reputationQuantity}</Text>
+                <Text
+                  fontWeight={"bold"}
+                  textColor={item.reputationQuality > 7 ? "green" : "orange"}
+                >
+                  {item.reputationQuality}
+                </Text>
               </Box>
             </Box>
-            <Box flexDir={"column"} width="250px">
-              <Text textAlign={"right"}>Max APY:</Text>
-              <Text textAlign={"right"}>Risk:</Text>
+          </Box>
+          <Box
+            flexDir={"row"}
+            display="flex"
+            width="100%"
+            paddingX="60px"
+            justifyContent="space-between"
+            alignItems={"center"}
+          >
+            <Box flexDir={"row"} display="flex" alignItems={"center"}>
+              <Heading size="s" marginRight={"10px"}>
+                Price:
+              </Heading>
+              <Heading size="2xl">${item.price}</Heading>
             </Box>
-            <Box flexDir={"column"} marginLeft="5px">
-              <Text fontWeight={"bold"}>{item.reputationQuality * 100}%</Text>
-              <Text fontWeight={"bold"}>{item.reputationQuantity}</Text>
+            <Box>
+              <Button width={"200px"}>Buy</Button>
             </Box>
           </Box>
           <Box flexDir={"row"} display="flex" padding="20px">
             <Box>
-              <Heading size="md">General</Heading>
               <Text>{item.long_desc}</Text>
             </Box>
           </Box>
