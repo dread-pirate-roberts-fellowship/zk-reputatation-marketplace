@@ -1,0 +1,27 @@
+[package]
+name = "ink_risc0_verifier"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+risc0-zkvm = { version = "0.14", default-features = false }
+risc0-zkp = { version = "0.14", default-features = false }
+
+ink = { version = "4.0.1", default-features = false }
+
+scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
+scale-info = { version = "2.3", default-features = false, features = ["derive"] }
+
+[dev-dependencies]
+factors-methods = { path = "factors/methods" }
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = ["std"]
+std = [
+    "ink/std",
+    "scale/std",
+    "scale-info/std",
+]
