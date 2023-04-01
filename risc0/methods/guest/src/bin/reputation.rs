@@ -26,8 +26,6 @@ pub struct Output {
 
 
 pub fn main() {
-    // proof that a certain 
-
 
     //public inputs
     let commitment: Vec<u8> = env::read();
@@ -38,18 +36,22 @@ pub fn main() {
     let mut nullifier: Vec<u8>  = env::read();
     let reputation_score: u64 = env::read();
 
+
     let mut x = min_reputation.to_le_bytes().to_vec();
-    x.append(&mut nullifier);
+    nullifier.append(&mut x);
 
     let sha = Impl::hash_bytes(&x.as_slice());
 
-
-    // check if commitment = hash(public_key(p_key) + reputation score)
+    if sha.as_bytes() != commitment.as_slice() {
+        panic!("commitment not according to nullifier and rep_score")
+    }
 
     //check if the private key belongs to the public key
     if reputation_score < min_reputation{
         panic!("Reputation score too small")
     };
+
+    // TODO check whether commitment part of the merkle tree
 
     let output = Output {
         commitment: commitment,
