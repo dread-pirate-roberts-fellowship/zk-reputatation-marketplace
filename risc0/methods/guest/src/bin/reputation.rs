@@ -3,12 +3,20 @@
 #![no_main]
 #![no_std]  // std support is experimental, but you can remove this to try it
 
+extern crate alloc;
+
 risc0_zkvm::guest::entry!(main);
+
+use risc0_zkvm::guest::env;
+use serde::{Deserialize, Serialize};
+
+
+
 
 /// Public journal values that will be committed by the image crop method.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Output {
-    pub commitment: String,
+    pub commitment: Vec<u32>,
     pub min_reputation: u64,
 }
 
@@ -19,7 +27,7 @@ pub fn main() {
 
 
     //public inputs
-    let commitment: String = env::read();
+    let commitment: Vec<u32> = env::read();
     let min_reputation: u64 = env::read();
 
     //private inputs
@@ -29,16 +37,15 @@ pub fn main() {
     // check if commitment = public_key(p_key) + reputation score
 
     //check if the private key belongs to the public key
-    if (reputation_score < min_reputation){
+    if reputation_score < min_reputation{
         panic!("Reputation score too small")
-    }
+    };
 
 
     let output = Output {
         commitment: commitment,
         min_reputation: min_reputation,
-    }
-    // TOOD check that the commitment is part of the merkle tree
+    };
     env::commit(&output);
     
 
