@@ -8,6 +8,7 @@
 /primitives/target/
 /integration-tests/**/target/
 /design/
+/risc0/target/
 
 # Ignore backup files creates by cargo fmt.
 **/*.rs.bk
