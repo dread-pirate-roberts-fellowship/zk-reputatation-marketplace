@@ -6,5 +6,30 @@
 risc0_zkvm::guest::entry!(main);
 
 pub fn main() {
-    // TODO: Implement your guest code here
+    // proof that a certain 
+
+
+    //public inputs
+    let commitment: xx = env::read();
+    let min_reputation: xx = env::read();
+
+    //private inputs
+    let p_key: xx = env::read();
+    let reputation_score: xx = env::read();
+
+    // check if commitment = public_key(p_key) + reputation score
+
+
+
+    //check if the private key belongs to the public key
+    if (reputation_score < min_reputation){
+        panic!("Reputation score too small")
+    }
+
+    // TOOD check that the commitment is part of the merkle tree
+
+    env::commit(&true);
+
+    
+
 }
