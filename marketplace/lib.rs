@@ -12,6 +12,7 @@ mod marketplace {
         storage::{Lazy, Mapping},
         LangError,
     };
+    use ink_e2e::subxt::config::substrate::Digest;
 
     #[ink(storage)]
     pub struct Marketplace {
@@ -20,7 +21,10 @@ mod marketplace {
         /// List of all assets.
         assets: Vec<Asset>,
         current_sale: Sale,
+        /// Mapping between Hash and bool 
+        spent_nullifier: Mapping<(,bool)>
     }
+
 
     #[derive(scale::Decode, scale::Encode)]
     #[cfg_attr(
@@ -74,18 +78,8 @@ mod marketplace {
             mk
         }
 
-        pub fn new_sale(mut self, asset_to_sell: Asset) -> Self {
-            let new_sale = Sale {
-                status: "OnGoing".to_string(),
-                prize: 0,
-                asset_id: asset_to_sell.id,
-            };
-            self.current_sale = new_sale;
-            self
-        }
-
         /// Modify Item on Sale 
-        pub fn put_asset_on_sale(mut self, mut asset: Asset) -> Self  {
+        pub fn put_asset_on_sale(mut self, mut asset: Asset, zk_proof: Digest) -> Self  {
             if !asset.purchasable {
                 asset.purchasable = true;
                 let ongoing_sale = Sale {
@@ -99,6 +93,7 @@ mod marketplace {
                 // ybort abort if nullifier was spent
             }
             self
+            //emit Event 
         }
 
         #[ink(message)]
@@ -108,12 +103,13 @@ mod marketplace {
         }
 
         #[ink(message)]
-        pub fn give_seller_review(&mut self, seller: AccountId, reputation_given: u32) {
-            //TBD
+        pub fn give_seller_review(&mut self, seller: AccountId, encrypted_change: Vec<u8>) {
+            //Check 
+            //emit Event 
         }
 
         #[ink(message)]
-        pub fn update_seller_reputation(&mut self, sale: Sale, seller_account: AccountId) {
+        pub fn update_seller_reputation(hash, review_proof:Digest) {
             //TBD
         }
     }
