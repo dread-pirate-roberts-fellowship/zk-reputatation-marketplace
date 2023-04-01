@@ -11,7 +11,14 @@ fn main() {
         "Prover should be constructed from valid method source code and corresponding method ID",
     );
 
-    // TODO: Implement communication with the guest here
+    let a: Vec<u32> = 17;
+    let b: u64 = u64;
+
+
+
+    prover.add_input_u32_slice(&to_vec(&a).expect("should be serializable"));
+    prover.add_input_u32_slice(&to_vec(&b).expect("should be serializable"));
+
 
     // Run prover & generate receipt
     let receipt = prover.run()
@@ -30,5 +37,3 @@ fn main() {
 // Prover::new(MULTIPLY_ELF).expect("Prover should be constructed from valid ELF binary");
 
 // // Next we send a & b to the guest
-// prover.add_input_u32_slice(&to_vec(&a).expect("should be serializable"));
-// prover.add_input_u32_slice(&to_vec(&b).expect("should be serializable"));
