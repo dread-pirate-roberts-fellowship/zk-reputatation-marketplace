@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { MdPerson } from "react-icons/md";
 import { Item } from "../components/Item";
+import { NewItemButton } from "../components/NewItem";
 import { myListedItems, transactionItems } from "../utils/helpers";
 
 const UserProfile: NextPage = () => {
@@ -45,7 +46,7 @@ const UserProfile: NextPage = () => {
           <Heading>Your profile</Heading>
         </Box>
         <Box>
-          <Button>List new item</Button>
+          <NewItemButton />
         </Box>
       </Box>
       <Box padding="10px">
