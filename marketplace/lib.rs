@@ -31,7 +31,7 @@ mod marketplace {
     )]
     pub struct Sale {
         status: String, //Write like an enum after
-        prize: u32,
+        price: u128,
         asset_id: u32,
         // seller_reputation - pending reputation to add in a way
     }
@@ -77,7 +77,7 @@ mod marketplace {
         pub fn new(assets_list: Vec<Asset>, users_list: Vec<UserProfile>) -> Self {
             let init_sale = Sale {
                 status: "Closed".to_string(),
-                prize: 0,
+                price: 0,
                 asset_id: 10,
             };
             let mk = Self {
@@ -107,7 +107,7 @@ mod marketplace {
                 asset.purchasable = true;
                 let ongoing_sale = Sale {
                     status: "OnGoing".to_string(),
-                    prize: 0,
+                    price: 0,
                     asset_id: asset.id,
                 };
                 self.current_sale = ongoing_sale;
@@ -121,8 +121,10 @@ mod marketplace {
         }
 
         #[ink(message)]
-        pub fn buy_asset(&mut self, asset: Asset, account: AccountId, price: u32) {
-            // check balance of account, compare to price
+        pub fn buy_asset(&mut self, asset: Asset, account: AccountId, final_price: u128) {
+            ink::env::debug_println!("final price: {}", final_price);
+            ink::env::debug_println!("contract balance: {}", self.env().balance());
+            assert!(final_price <= self.env().balance(), "insufficient funds!");
             // transfer of the account Id to the asset
             self.env().emit_event(ItemBought { seller_id: account });
         }
@@ -133,7 +135,6 @@ mod marketplace {
             //Update seller review
             self.env().emit_event(ItemBought { seller_id: seller });
         }
-
 
         #[ink(message)]
         pub fn update_seller_reputation(&self, hash: Hash, review_proof: [u32; 8]) {
