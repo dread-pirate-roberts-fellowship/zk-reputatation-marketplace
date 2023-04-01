@@ -78,6 +78,20 @@ mod marketplace {
             };
             mk
         }
+        
+        /// Event emitted when an iten is put on sale
+        #[ink(event)]
+        pub struct ItemOnsale {
+            seller_id: AccountId,
+        }
+
+        /// Event emitted when an iten is bought
+        #[ink(event)]
+        pub struct ItemBought
+         {
+            seller_id: AccountId,
+        }
+ 
 
         #[ink(message)]
         ///Register new seller 
@@ -86,7 +100,7 @@ mod marketplace {
         }
 
         /// Modify Item on Sale 
-        pub fn put_asset_on_sale(mut self, mut asset: Asset, zk_proof: Digest) -> Result<u32, LangError>  {
+        pub fn put_asset_on_sale(mut self, mut asset: Asset, zk_proof: Digest, account: AccountId) -> Result<u32, LangError>  {
             if !asset.purchasable {
                 asset.purchasable = true;
                 let ongoing_sale = Sale {
@@ -99,14 +113,19 @@ mod marketplace {
                 // Put nft in the contract, and set the price
                 // ybort abort if nullifier was spent
             }
-            self
-            //emit Event 
+            self.env().emit_event(ItemOnsale {
+                seller_id: account
+            }); 
+            // TODO: Add Result output
         }
 
         #[ink(message)]
         pub fn buy_asset(&mut self, asset: Asset, account: AccountId, price: u32) {
             // check balance of account, compare to price
             // transfer of the account Id to the asset
+            self.env().emit_event(ItemBought {
+                seller_id: account
+            }); 
         }
 
         #[ink(message)]
