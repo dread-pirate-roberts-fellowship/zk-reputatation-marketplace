@@ -8,7 +8,7 @@ import {
   Text,
   useColorMode,
 } from "@chakra-ui/react";
-import Logo from "../../public/x2";
+// import Logo from "../../public/x2";
 import { useRouter } from "next/router";
 import { shorten } from "../utils/networkHelpers";
 const Header = () => {
@@ -25,7 +25,7 @@ const Header = () => {
       >
         <Box>
           <Link onClick={() => router.push("/")}>
-            <Logo height={50} />
+            {/* <Logo height={50} /> */}
           </Link>
         </Box>
         <Box display="flex" textAlign="right">
