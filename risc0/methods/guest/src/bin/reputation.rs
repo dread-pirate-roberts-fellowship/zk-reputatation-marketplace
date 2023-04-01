@@ -33,8 +33,11 @@ pub fn main() {
 
     //private inputs
     let p_key: Vec<u8>  = env::read();
-    let nullifier: Vec<u8>  = env::read();
+    let mut nullifier: Vec<u8>  = env::read();
     let reputation_score: u64 = env::read();
+
+    let mut x = min_reputation.to_le_bytes().to_vec();
+    x.append(&mut nullifier);
 
     // check if commitment = hash(public_key(p_key) + reputation score)
 
