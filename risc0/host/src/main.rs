@@ -1,6 +1,13 @@
 // TODO: Update the name of the method loaded by the prover. E.g., if the method is `multiply`, replace `METHOD_NAME_ID` with `MULTIPLY_ID` and replace `METHOD_NAME_PATH` with `MULTIPLY_PATH`
 use methods::{REPUTATION_ID, REPUTATION_PATH};
-use risc0_zkvm::Prover;
+
+extern crate alloc;
+
+use alloc::{vec, vec::Vec};
+use risc0_zkvm::{
+    serde::{from_slice, to_vec},
+    Prover,
+};
 // use risc0_zkvm::serde::{from_slice, to_vec};
 
 fn main() {
@@ -11,13 +18,21 @@ fn main() {
         "Prover should be constructed from valid method source code and corresponding method ID",
     );
 
-    let a: Vec<u32> = 17;
-    let b: u64 = u64;
+    let a: Vec<u8> = vec![0,1,2,3,4,5];
+    let b: u64 = 7;
+    let c: Vec<u8> = vec![0,1,2,3,4,5];
+    let d: Vec<u8> = vec![0,1,2,3,4,5];
+    let e: u64 = 9;
+    
+
 
 
 
     prover.add_input_u32_slice(&to_vec(&a).expect("should be serializable"));
     prover.add_input_u32_slice(&to_vec(&b).expect("should be serializable"));
+    prover.add_input_u32_slice(&to_vec(&c).expect("should be serializable"));
+    prover.add_input_u32_slice(&to_vec(&d).expect("should be serializable"));
+    prover.add_input_u32_slice(&to_vec(&e).expect("should be serializable"));
 
 
     // Run prover & generate receipt
@@ -30,6 +45,9 @@ fn main() {
     );
 
     // TODO: Implement code for transmitting or serializing the receipt for other parties to verify here
+
+    println!("Done.");
+
 }
 
 
