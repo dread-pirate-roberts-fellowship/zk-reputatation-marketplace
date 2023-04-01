@@ -3,42 +3,103 @@
 #[ink::contract]
 mod marketplace {
 
-    /// Defines the storage of your contract.
-    /// Add new fields to the below struct in order
-    /// to add new static storage fields to your contract.
+    use ink::{
+        env::{
+            call::{build_call, Call, ExecutionInput, Selector},
+            debug_println, CallFlags, DefaultEnvironment,
+        },
+        prelude::{collections::BTreeMap, string::String, vec::Vec},
+        storage::{Lazy, Mapping},
+        LangError,
+    };
+
     #[ink(storage)]
     pub struct Marketplace {
-        /// Stores a single `bool` value on the storage.
-        value: bool,
+        /// List of all users.
+        users: <Lazy<Vec<UserProfile>>,
+        /// List of all assets.
+        assets: <Lazy<Vec<Asset>>,
+    }
+
+    #[derive(scale::Decode, scale::Encode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub struct Sale {
+        status: String, //Write like an enum after 
+        prize: u32,
+        asset: Asset,
+        // pending reputation to add in a way 
+    }
+
+    #[derive(scale::Decode, scale::Encode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub struct UserProfile {
+        account_id: AccountId, 
+        reputation: u32,
+    }
+
+    #[derive(scale::Decode, scale::Encode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub struct Asset {
+        id: u64,
+        account_owner: AccountId, // No direct account, can be offuscated
+        name: String,
+        description: Vec<u8>,
+        purchasable: bool,
     }
 
     impl Marketplace {
-        /// Constructor that initializes the `bool` value to the given `init_value`.
+        /// Constructor that initializes the marketplace
         #[ink(constructor)]
-        pub fn new(init_value: bool) -> Self {
-            Self { value: init_value }
+        pub fn new() -> Self {
+            let mut mk = Self {
+                users: Default::default(), 
+                assets: Default::default()
+            };
         }
 
-        /// Constructor that initializes the `bool` value to `false`.
-        ///
-        /// Constructors can delegate to other constructors.
+        /// Constructor that create a new sale for an item
         #[ink(constructor)]
-        pub fn default() -> Self {
-            Self::new(Default::default())
+        pub fn new_sale(asset_to_sell: Asset) -> Self {
+            Self {
+                prize: 0,
+                item: asset_to_sell,
+            }
         }
 
-        /// A message that can be called on instantiated contracts.
-        /// This one flips the value of the stored `bool` from `true`
-        /// to `false` and vice versa.
+        /// Modify Item on Sale 
         #[ink(message)]
-        pub fn flip(&mut self) {
-            self.value = !self.value;
+        pub fn put_asset_on_sale(&mut self, asset: Asset) -> <Result<u64, String>> {
+            if !asset.purchasable {
+                asset.purchasable = true;
+                // Verify the proof of reputation
+                // Put nft in the contract, and set the price
+                // ybort abort if nullifier was spent
+            }
         }
 
-        /// Simply returns the current value of our `bool`.
         #[ink(message)]
-        pub fn get(&self) -> bool {
-            self.value
+        pub fn buy_asset(&mut self, asset: Asset, account: AccountId, price: u32) {
+            // check balance of account, compare to price
+            // transfer of the account Id to the asset
+        }
+
+        #[ink(message)]
+        pub fn give_seller_review(seller: AccountId, reputation_given: u32) {
+            //TBD
+        }
+
+        #[ink(message)]
+        pub fn update_seller_reputation(sale: Sale, seller_account: AccountId) {
+            //TBD
         }
     }
 
@@ -66,7 +127,6 @@ mod marketplace {
             assert_eq!(marketplace.get(), true);
         }
     }
-
 
     /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
     ///
