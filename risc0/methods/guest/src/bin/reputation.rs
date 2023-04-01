@@ -9,29 +9,30 @@ risc0_zkvm::guest::entry!(main);
 
 use risc0_zkvm::guest::env;
 use serde::{Deserialize, Serialize};
+use alloc::vec::Vec;
 
 
-
+type Hash = Vec<u8>;
 
 /// Public journal values that will be committed by the image crop method.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Output {
-    pub commitment: Vec<u32>,
+    pub commitment: Vec<u8>,
     pub min_reputation: u64,
 }
 
 
 
 pub fn main() {
-    // proof that a certain 
+    // proof that a certain
 
 
     //public inputs
-    let commitment: Vec<u32> = env::read();
+    let commitment: Hash = env::read();
     let min_reputation: u64 = env::read();
 
     //private inputs
-    let p_key: String = env::read();
+    let p_key: Vec<u8> = env::read();
     let reputation_score: u64 = env::read();
 
     // check if commitment = public_key(p_key) + reputation score
@@ -47,6 +48,6 @@ pub fn main() {
         min_reputation: min_reputation,
     };
     env::commit(&output);
-    
+
 
 }
