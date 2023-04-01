@@ -90,7 +90,7 @@ export const NewItemButton = () => {
 
   return (
     <>
-      <Button onClick={onOpen}></Button>
+      <Button onClick={onOpen}>New item</Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>

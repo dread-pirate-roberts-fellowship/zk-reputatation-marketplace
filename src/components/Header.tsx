@@ -3,7 +3,6 @@ import React from "react";
 import {
   Box,
   Button,
-  CircularProgress,
   IconButton,
   Icon,
   Link,
@@ -45,9 +44,9 @@ const Header = () => {
         height="75px"
         alignItems={"center "}
       >
-        <Box>
+        <Box height="150px" width="150px" display="flex" alignItems={"center"}>
           <Link onClick={() => router.push("/")}>
-            <Text>Logo</Text>
+            <img src="/logo.svg" alt="next" />
           </Link>
         </Box>
         <Box display="flex" textAlign="right">
