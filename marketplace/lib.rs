@@ -8,7 +8,7 @@ mod marketplace {
             call::{build_call, Call, ExecutionInput, Selector},
             debug_println, CallFlags, DefaultEnvironment,
         },
-        prelude::{collections::BTreeMap, string::String, vec::Vec},
+        prelude::{collections::BTreeMap, string::String, vec::Vec, string::ToString},
         storage::{Lazy, Mapping},
         LangError,
     };
@@ -16,9 +16,10 @@ mod marketplace {
     #[ink(storage)]
     pub struct Marketplace {
         /// List of all users.
-        users: <Lazy<Vec<UserProfile>>,
+        users: Vec<UserProfile>,
         /// List of all assets.
-        assets: <Lazy<Vec<Asset>>,
+        assets: Vec<Asset>,
+        current_sale: Sale,
     }
 
     #[derive(scale::Decode, scale::Encode)]
@@ -29,8 +30,8 @@ mod marketplace {
     pub struct Sale {
         status: String, //Write like an enum after 
         prize: u32,
-        asset: Asset,
-        // pending reputation to add in a way 
+        asset_id: u32,
+        //seller_reputation - pending reputation to add in a way 
     }
 
     #[derive(scale::Decode, scale::Encode)]
@@ -49,7 +50,7 @@ mod marketplace {
         derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
     )]
     pub struct Asset {
-        id: u64,
+        id: u32,
         account_owner: AccountId, // No direct account, can be offuscated
         name: String,
         description: Vec<u8>,
@@ -59,31 +60,45 @@ mod marketplace {
     impl Marketplace {
         /// Constructor that initializes the marketplace
         #[ink(constructor)]
-        pub fn new() -> Self {
-            let mut mk = Self {
-                users: Default::default(), 
-                assets: Default::default()
+        pub fn new(assets_list: Vec<Asset>, users_list: Vec<UserProfile>, ) -> Self {
+            let init_sale = Sale {
+                status: "Closed".to_string(),
+                prize: 0,
+                asset_id : 10
             };
+            let mk = Self {
+                users: Vec::new(),
+                assets: assets_list,
+                current_sale: init_sale
+            };
+            mk
         }
 
-        /// Constructor that create a new sale for an item
-        #[ink(constructor)]
-        pub fn new_sale(asset_to_sell: Asset) -> Self {
-            Self {
+        pub fn new_sale(mut self, asset_to_sell: Asset) -> Self {
+            let new_sale = Sale {
+                status: "OnGoing".to_string(),
                 prize: 0,
-                item: asset_to_sell,
-            }
+                asset_id: asset_to_sell.id,
+            };
+            self.current_sale = new_sale;
+            self
         }
 
         /// Modify Item on Sale 
-        #[ink(message)]
-        pub fn put_asset_on_sale(&mut self, asset: Asset) -> <Result<u64, String>> {
+        pub fn put_asset_on_sale(mut self, mut asset: Asset) -> Self  {
             if !asset.purchasable {
                 asset.purchasable = true;
+                let ongoing_sale = Sale {
+                   status: "OnGoing".to_string(), 
+                   prize: 0, 
+                   asset_id: asset.id
+                };
+                self.current_sale = ongoing_sale;
                 // Verify the proof of reputation
                 // Put nft in the contract, and set the price
                 // ybort abort if nullifier was spent
             }
+            self
         }
 
         #[ink(message)]
@@ -93,12 +108,12 @@ mod marketplace {
         }
 
         #[ink(message)]
-        pub fn give_seller_review(seller: AccountId, reputation_given: u32) {
+        pub fn give_seller_review(&mut self, seller: AccountId, reputation_given: u32) {
             //TBD
         }
 
         #[ink(message)]
-        pub fn update_seller_reputation(sale: Sale, seller_account: AccountId) {
+        pub fn update_seller_reputation(&mut self, sale: Sale, seller_account: AccountId) {
             //TBD
         }
     }
