@@ -8,6 +8,8 @@ extern crate alloc;
 risc0_zkvm::guest::entry!(main);
 
 use risc0_zkvm::guest::env;
+use risc0_zkvm::sha::{Impl, Sha256};
+
 use serde::{Deserialize, Serialize};
 use alloc::{vec, vec::Vec};
 
@@ -38,6 +40,9 @@ pub fn main() {
 
     let mut x = min_reputation.to_le_bytes().to_vec();
     x.append(&mut nullifier);
+
+    let sha = Impl::hash_bytes(&x.as_slice());
+
 
     // check if commitment = hash(public_key(p_key) + reputation score)
 
