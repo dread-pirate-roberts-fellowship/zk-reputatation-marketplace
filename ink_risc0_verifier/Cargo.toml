@@ -1,6 +1,7 @@
 [package]
 name = "ink_risc0_verifier"
 version = "0.1.0"
+authors = ["TopsyKretts"]
 edition = "2021"
 
 [dependencies]

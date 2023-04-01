@@ -5,7 +5,7 @@ mod ink_risk0_verifier {
     use risc0_zkp::core::config::HashSuitePoseidon;
     use risc0_zkvm::Receipt;
 
-    use scale::{Encode, Decode};
+    use scale::{Decode, Encode};
     use scale_info::{prelude::vec::Vec, TypeInfo};
 
     #[derive(Encode, Decode, PartialEq, Eq, Clone, TypeInfo)]
@@ -28,7 +28,8 @@ mod ink_risk0_verifier {
 
         #[ink(message)]
         pub fn verify_with_poseidon(&self, journal: Vec<u8>, seal: Vec<u32>) -> Result<(), Error> {
-            Receipt::new(&journal, &seal).verify_with_hash::<HashSuitePoseidon, _>(&self.image_id)
+            Receipt::new(&journal, &seal)
+                .verify_with_hash::<HashSuitePoseidon, _>(&self.image_id)
                 .map_err(|_| Error::Invalid)
         }
     }
