@@ -3,18 +3,16 @@
 #[ink::contract]
 mod marketplace {
 
+    use risc0_zkvm::sha::Digest;
+
     use ink::{
-        env::{
-            call::{build_call, Call, ExecutionInput, Selector},
-            debug_println, CallFlags, DefaultEnvironment,
-        },
-        prelude::{collections::BTreeMap, string::String, vec::Vec, string::ToString},
-        storage::{Lazy, Mapping},
+        prelude::{collections::BTreeSet, string::String, vec::Vec, string::ToString},
+        storage::Mapping,
         LangError,
     };
-    use ink_e2e::subxt::config::substrate::Digest;
 
     #[ink(storage)]
+    
     pub struct Marketplace {
         /// List of all users.
         users: Vec<UserProfile>,
@@ -22,7 +20,8 @@ mod marketplace {
         assets: Vec<Asset>,
         current_sale: Sale,
         /// Mapping between Hash and bool 
-        spent_nullifier: Mapping<(,bool)>
+        spent_nullifier: Mapping<Hash, bool>, 
+        commitments: BTreeSet<Hash>
     }
 
 
@@ -35,7 +34,7 @@ mod marketplace {
         status: String, //Write like an enum after 
         prize: u32,
         asset_id: u32,
-        //seller_reputation - pending reputation to add in a way 
+        // seller_reputation - pending reputation to add in a way 
     }
 
     #[derive(scale::Decode, scale::Encode)]
@@ -73,13 +72,21 @@ mod marketplace {
             let mk = Self {
                 users: Vec::new(),
                 assets: assets_list,
-                current_sale: init_sale
+                current_sale: init_sale, 
+                //TODO: initialize spent_nullifier
+                commitments: BTreeSet::new()
             };
             mk
         }
 
+        #[ink(message)]
+        ///Register new seller 
+        pub fn register_seller(&self, new_hash: Hash)  {
+            self.commitments.insert(new_hash);
+        }
+
         /// Modify Item on Sale 
-        pub fn put_asset_on_sale(mut self, mut asset: Asset, zk_proof: Digest) -> Self  {
+        pub fn put_asset_on_sale(mut self, mut asset: Asset, zk_proof: Digest) -> Result<u32, LangError>  {
             if !asset.purchasable {
                 asset.purchasable = true;
                 let ongoing_sale = Sale {
@@ -109,7 +116,7 @@ mod marketplace {
         }
 
         #[ink(message)]
-        pub fn update_seller_reputation(hash, review_proof:Digest) {
+        pub fn update_seller_reputation(&self, hash: Hash, review_proof:Digest) {
             //TBD
         }
     }

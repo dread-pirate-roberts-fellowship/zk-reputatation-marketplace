@@ -6,10 +6,11 @@ edition = "2021"
 
 [dependencies]
 ink = { version = "4.0.1", default-features = false }
+risc0-zkvm = { version = "0.14", default-features = false }
+risc0-zkp = { version = "0.14", default-features = false }
 
 scale = { package = "parity-scale-codec", version = "3", default-features = false, features = ["derive"] }
 scale-info = { version = "2.3", default-features = false, features = ["derive"], optional = true }
-ink_risc0_verifier = { path="/../ink_risc0_verifier"}
 
 [dev-dependencies]
 ink_e2e = "4.0.1"
