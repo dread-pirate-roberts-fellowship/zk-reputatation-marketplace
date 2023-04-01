@@ -10,6 +10,8 @@ risc0_zkvm::guest::entry!(main);
 use risc0_zkvm::guest::env;
 use serde::{Deserialize, Serialize};
 use alloc::{vec, vec::Vec};
+use risc0_zkvm::sha::{Impl, Sha256};
+
 
 
 
@@ -35,8 +37,10 @@ pub fn main() {
     let p_key: Vec<u8>  = env::read();
     let nullifier: Vec<u8>  = env::read();
     let reputation_score: u64 = env::read();
-
-    // check if commitment = hash(public_key(p_key) + reputation score)
+    
+    let x=  Vec::from(min_reputation)
+    // check if commitment = hash(nullifier + reputation score)
+    let hashed = Impl::hash_bytes(&data.as_bytes());
 
     //check if the private key belongs to the public key
     if reputation_score < min_reputation{
