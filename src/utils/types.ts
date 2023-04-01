@@ -7,3 +7,12 @@ export interface itemType {
   long_desc: string;
   pic: string;
 }
+
+export interface userType {
+  id: number;
+  username: string;
+  address: string;
+  reputationQuantity: number;
+  reputationQuality: number;
+  items: itemType[];
+}

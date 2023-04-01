@@ -40,3 +40,37 @@ export const items: itemType[] = [
     pic: "https://i.pinimg.com/originals/e5/77/12/e57712672fa515e441498f4539fe0f37.jpg",
   },
 ];
+export const users: userType[] = [
+  {
+    id: 1,
+    username: "alice",
+    address: "101b 1st St., Veteran, WY 82243",
+    reputationQuantity: 133,
+    reputationQuality: 8,
+    items: items,
+  },
+  {
+    id: 2,
+    username: "bob",
+    address: "3972 North Alta Vista Rd., Torrington, WY 82240",
+    reputationQuantity: 18,
+    reputationQuality: 9,
+    items: items,
+  },
+  {
+    id: 3,
+    username: "carol",
+    address: "Rue de Camões #6, 2250-021, Constancia, Portugal",
+    reputationQuantity: 92,
+    reputationQuality: 7,
+    items: items,
+  },
+  { 
+    id: 4,
+    username: "dave",
+    address: "Wijnveld 67, Zele, 9240, Belgium ",
+    reputationQuantity: 1,
+    reputationQuality: 3,
+    items: items,
+  },
+]
