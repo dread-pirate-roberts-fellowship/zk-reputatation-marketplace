@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { items } from "../../utils/helpers";
 
-const itemDetails: NextPage = () => {
+const ItemDetails: NextPage = () => {
   const router = useRouter();
   const { name } = router.query;
   const item = items.find((item) => item.name == name);
@@ -132,4 +132,4 @@ const itemDetails: NextPage = () => {
   }
 };
 
-export default itemDetails;
+export default ItemDetails;

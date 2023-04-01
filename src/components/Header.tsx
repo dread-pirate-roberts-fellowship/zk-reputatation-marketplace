@@ -4,6 +4,8 @@ import {
   Box,
   Button,
   CircularProgress,
+  IconButton,
+  Icon,
   Link,
   Text,
   useColorMode,
@@ -13,7 +15,7 @@ import { useExtension } from "useink";
 // import Logo from "../../public/x2";
 import { useRouter } from "next/router";
 import { shorten } from "../utils/networkHelpers";
-
+import { MdPerson } from "react-icons/md";
 const Header = () => {
   const router = useRouter();
   const { toggleColorMode } = useColorMode();
@@ -49,6 +51,11 @@ const Header = () => {
           </Link>
         </Box>
         <Box display="flex" textAlign="right">
+          <IconButton
+            icon={<Icon as={MdPerson} />}
+            onClick={() => router.push("/profile")}
+            aria-label={""}
+          />
           {!account ? (
             <Button
               fontSize="14px"
