@@ -3,5 +3,10 @@
 To build the contract:
 
 ```
-cargo +nightly contract build
+cargo contract build --release
+```
+
+To test:
+```
+cargo test --features "prove" --release
 ```
