@@ -154,12 +154,12 @@ mod marketplace {
                 return Err(LangError::CouldNotReadInput);
             }
 
-            let journal = zk_proof.0.clone();
+            let _journal = zk_proof.0.clone();
             self.risc0_verifier_1
                 .verify(zk_proof.0, zk_proof.1)
                 .map_err(|_| LangError::CouldNotReadInput)?;
 
-            // abort if nullifier was spent
+            // TODO: abort if nullifier was spent
 
             let item_id = self.last_item_id;
             self.last_item_id += 1;
