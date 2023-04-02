@@ -1,5 +1,10 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+pub use self::ink_risk0_verifier::{
+    InkRisk0Verifier,
+    InkRisk0VerifierRef,
+};
+
 #[ink::contract]
 mod ink_risk0_verifier {
     use risc0_zkvm::Receipt;

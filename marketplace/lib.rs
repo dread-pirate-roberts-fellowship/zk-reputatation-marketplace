@@ -12,6 +12,8 @@ mod marketplace {
         LangError,
     };
 
+    use ink_risc0_verifier::InkRisk0VerifierRef;
+
     type ItemId = u32;
     type Reputation = u32;
     // type ReputationChange = i8;
@@ -30,6 +32,8 @@ mod marketplace {
         // Commitments are to hash(nullifier_new + reputation_score)
         commitments: BTreeSet<Hash>,
         last_item_id: ItemId,
+        risc0_verifier_1: InkRisk0VerifierRef,
+        risc0_verifier_2: InkRisk0VerifierRef,
     }
 
     #[derive(scale::Decode, scale::Encode)]
