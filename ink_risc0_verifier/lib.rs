@@ -1,5 +1,10 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+pub use self::ink_risk0_verifier::{
+    InkRisc0Verifier,
+    InkRisc0VerifierRef,
+};
+
 #[ink::contract]
 mod ink_risk0_verifier {
     use risc0_zkvm::Receipt;
@@ -14,12 +19,12 @@ mod ink_risk0_verifier {
     }
 
     #[ink(storage)]
-    pub struct InkRisk0Verifier {
+    pub struct InkRisc0Verifier {
         /// SHA-256 of the program binary
         image_id: [u32; 8],
     }
 
-    impl InkRisk0Verifier {
+    impl InkRisc0Verifier {
         #[ink(constructor)]
         pub fn new(image_id: [u32; 8]) -> Self {
             Self { image_id }
@@ -52,7 +57,7 @@ mod ink_risk0_verifier {
             let receipt = prover.run().unwrap();
             let Receipt { journal, seal } = receipt;
 
-            let ink_risk0_verifier = InkRisk0Verifier::new(MULTIPLY_ID.into());
+            let ink_risk0_verifier = InkRisc0Verifier::new(MULTIPLY_ID.into());
             assert!(ink_risk0_verifier.verify(journal, seal).is_ok());
         }
     }

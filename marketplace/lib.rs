@@ -12,6 +12,8 @@ mod marketplace {
         LangError,
     };
 
+    use ink_risc0_verifier::InkRisc0VerifierRef;
+
     type ItemId = u32;
     type Reputation = u32;
     // type ReputationChange = i8;
@@ -30,6 +32,8 @@ mod marketplace {
         // Commitments are to hash(nullifier_new + reputation_score)
         commitments: BTreeSet<Hash>,
         last_item_id: ItemId,
+        risc0_verifier_1: InkRisc0VerifierRef,
+        risc0_verifier_2: InkRisc0VerifierRef,
     }
 
     #[derive(scale::Decode, scale::Encode)]
@@ -83,22 +87,35 @@ mod marketplace {
         seller_id: AccountId,
     }
 
+    // TODO
+    const PROOF_1: [u32; 8] = [0; 8];
+    const PROOF_2: [u32; 8] = [0; 8];
+
     impl Marketplace {
         /// Constructor that initializes the marketplace
         #[ink(constructor)]
-        pub fn new() -> Self {
+        pub fn new(version: u32, ink_risc0_verifier_code_hash: Hash) -> Self {
+            let total_balance = Self::env().balance();
+            let salt = version.to_le_bytes();
+            let risc0_verifier_1 = InkRisc0VerifierRef::new(PROOF_1)
+                .endowment(total_balance / 4)
+                .code_hash(ink_risc0_verifier_code_hash)
+                .salt_bytes(salt)
+                .instantiate();
+            let risc0_verifier_2 = InkRisc0VerifierRef::new(PROOF_2)
+                .endowment(total_balance / 4)
+                .code_hash(ink_risc0_verifier_code_hash)
+                .salt_bytes(salt)
+                .instantiate();
             Self {
                 items: Mapping::new(),
                 ongoing_sales: Mapping::new(),
                 spent_nullifiers: Mapping::new(),
                 commitments: BTreeSet::new(),
                 last_item_id: ItemId::default(),
+                risc0_verifier_1,
+                risc0_verifier_2,
             }
-        }
-
-        #[ink(constructor)]
-        pub fn default() -> Self {
-            Self::new()
         }
 
         /// Register new seller
@@ -218,18 +235,11 @@ mod marketplace {
         /// Imports all the definitions from the outer scope so we can use them here.
         use super::*;
 
-        /// We test if the default constructor does its job.
-        #[ink::test]
-        fn default_works() {
-            let _marketplace = Marketplace::default();
-        }
-
-        /// We test a simple use case of our contract.
-        #[ink::test]
-        fn it_works() {
-            let mut _marketplace = Marketplace::new();
-            // TODO
-        }
+        // #[ink::test]
+        // fn it_works() {
+        //     let mut _marketplace = Marketplace::new();
+        //     // TODO
+        // }
     }
 
     /// This is how you'd write end-to-end (E2E) or integration tests for ink! contracts.
