@@ -27,3 +27,4 @@ std = [
     "scale-info/std",
 ]
 prove = ["risc0-zkvm/prove"]
+ink-as-dependency = []
