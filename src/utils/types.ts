@@ -11,6 +11,7 @@ export interface itemType {
     | "sold"
     | "gaveReview"
     | "receivedReview"
-    | "reviewExpired";
+    | "reviewExpired"
+    | "fundsClaimed";
   review?: number;
 }

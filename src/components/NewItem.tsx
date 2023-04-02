@@ -14,11 +14,15 @@ import {
   ModalOverlay,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { doSave } from "../utils/ipfs";
+import { FakeItemDispatchContext } from "../utils/fake";
+import { itemType } from "../utils/types";
 
 const AddItemForm = (props) => {
+  const dispatch = useContext(FakeItemDispatchContext);
+
   const [item_name, setItemName] = useState(null);
   const handleItemNameChange = (e: any) => setItemName(e.target.value);
   const isItemError = item_name === "";
@@ -96,6 +100,16 @@ const AddItemForm = (props) => {
               item_description: item_description,
               item_picture_url: item_picture_url,
             });
+            // dispatch({
+            //   type: "addedItem",
+            //   value: {
+            //     name: item_name as string,
+            //     price: item_price as string,
+            //     description: item_description as string,
+            //     picture_url: item_picture_url as string,
+            //     status: "open",
+            //   } as itemType,
+            // });
             props.doClose();
           }}
         >

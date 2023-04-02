@@ -19,13 +19,14 @@ import {
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MdPerson } from "react-icons/md";
 import { Item } from "../components/Item";
 import { NewItemButton } from "../components/NewItem";
-import { myListedItems, transactionItems } from "../utils/helpers";
+import { FakeItemContext } from "../utils/fake";
 
 const UserProfile: NextPage = () => {
+  const items = useContext(FakeItemContext);
   return (
     <Box
       w="100%"
@@ -70,9 +71,11 @@ const UserProfile: NextPage = () => {
           display={"flex"}
           justifyContent="space-between"
         >
-          {transactionItems.map((item, index) => (
-            <Item item={item} key={index} />
-          ))}
+          {items
+            .filter((item) => item.status != "open")
+            .map((item, index) => (
+              <Item item={item} key={index} />
+            ))}
         </Box>
       </Box>
     </Box>
