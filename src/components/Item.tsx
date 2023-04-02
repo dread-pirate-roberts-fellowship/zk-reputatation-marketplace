@@ -177,7 +177,9 @@ export const Item = ({ item }: { item: itemType }) => {
                 />
               ))}
             </Box>
-            <Button onClick={() => {}}>Claim your funds</Button>
+            <Button onClick={() => {}}>
+              Update your reputation & claim your funds
+            </Button>
           </Box>
         </>
       ) : (
