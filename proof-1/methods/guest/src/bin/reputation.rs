@@ -1,7 +1,5 @@
-// TODO: Rename this file to change the name of this method from METHOD_NAME
-
 #![no_main]
-#![no_std]  // std support is experimental, but you can remove this to try it
+#![no_std]
 
 extern crate alloc;
 
@@ -11,30 +9,25 @@ use risc0_zkvm::guest::env;
 use risc0_zkvm::sha::{Impl, Sha256};
 
 use serde::{Deserialize, Serialize};
-use alloc::{vec, vec::Vec};
+use alloc::vec::Vec;
 
 
-
-
-/// Public journal values that will be committed by the image crop method.
+/// TODO
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Output {
     pub commitment: Vec<u8>,
-    pub min_reputation: u64,
+    pub min_reputation: u32,
 }
 
-
-
 pub fn main() {
-
-    //public inputs
+    // public inputs
     let commitment: Vec<u8> = env::read();
-    let min_reputation: u64 = env::read();
+    let min_reputation: u32 = env::read();
 
-    //private inputs
-    let p_key: Vec<u8>  = env::read();
+    // private inputs
+    let _p_key: Vec<u8>  = env::read();
     let mut nullifier: Vec<u8>  = env::read();
-    let reputation_score: u64 = env::read();
+    let reputation_score: u32 = env::read();
 
 
     let mut x = reputation_score.to_le_bytes().to_vec();
@@ -46,8 +39,9 @@ pub fn main() {
         panic!("commitment not according to nullifier and rep_score")
     }
 
-    //check if the private key belongs to the public key
-    if reputation_score < min_reputation{
+    // TODO: check if the private key belongs to the public key
+
+    if reputation_score < min_reputation {
         panic!("Reputation score too small")
     };
 
@@ -57,7 +51,6 @@ pub fn main() {
         commitment: commitment,
         min_reputation: min_reputation,
     };
-    env::commit(&output);
-    
 
+    env::commit(&output);
 }

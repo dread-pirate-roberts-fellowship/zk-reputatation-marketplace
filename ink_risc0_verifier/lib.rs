@@ -42,13 +42,13 @@ mod ink_risk0_verifier {
     mod tests {
         use super::*;
         /// Imports all the definitions from the outer scope so we can use them here.
-        use factors_methods::{MULTIPLY_ELF, MULTIPLY_ID};
+        use factors_methods::{REVIEW_ELF, REVIEW_ID};
         use risc0_zkvm::{prove::Prover, serde::to_vec};
 
         /// We test a simple use case of our contract.
         #[ink::test]
         fn verify_password_checker() {
-            let mut prover = Prover::new(MULTIPLY_ELF).unwrap();
+            let mut prover = Prover::new(REVIEW_ELF).unwrap();
             let a: u64 = 2;
             let b: u64 = 3;
             prover.add_input_u32_slice(&to_vec(&a).unwrap());
@@ -57,7 +57,7 @@ mod ink_risk0_verifier {
             let receipt = prover.run().unwrap();
             let Receipt { journal, seal } = receipt;
 
-            let ink_risk0_verifier = InkRisc0Verifier::new(MULTIPLY_ID.into());
+            let ink_risk0_verifier = InkRisc0Verifier::new(REVIEW_ID.into());
             assert!(ink_risk0_verifier.verify(journal, seal).is_ok());
         }
     }
