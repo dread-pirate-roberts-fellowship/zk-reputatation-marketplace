@@ -37,10 +37,10 @@ pub fn main() {
     let reputation_score: u64 = env::read();
 
 
-    let mut x = min_reputation.to_le_bytes().to_vec();
+    let mut x = reputation_score.to_le_bytes().to_vec();
     nullifier.append(&mut x);
 
-    let sha = Impl::hash_bytes(&x.as_slice());
+    let sha = Impl::hash_bytes(&nullifier.as_slice());
 
     if sha.as_bytes() != commitment.as_slice() {
         panic!("commitment not according to nullifier and rep_score")
