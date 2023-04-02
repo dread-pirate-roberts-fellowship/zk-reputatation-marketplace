@@ -1,40 +1,46 @@
-// TODO: Update the name of the method loaded by the prover. E.g., if the method is `review`, replace `METHOD_NAME_ID` with `REVIEW_ID` and replace `METHOD_NAME_PATH` with `REVIEW_PATH`
-use methods::{REPUTATION_ID, REPUTATION_ELF};
+use methods::{REPUTATION_ELF, REPUTATION_ID};
 
 extern crate alloc;
 
-use alloc::{vec, vec::Vec};
-use risc0_zkvm::{
-    serde::{from_slice, to_vec},
-    prove::Prover,
-};
-// use factors_methods::{REVIEW_ELF, REVIEW_ID};
-// use risc0_zkvm::{prove::Prover, serde::to_vec};
+use alloc::vec::Vec;
+use risc0_zkvm::{prove::Prover, serde::to_vec};
 
+use clap::Parser;
+
+/// Simple program to greet a person
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    // TODO: extract this into a common struct
+    // and use `add_input_u8_slice` once.
+
+    // public inputs
+    commitment: Vec<u8>,
+
+    min_reputation: u32,
+
+    // private inputs
+    _private_key: Option<Vec<u8>>,
+
+    nullifier: Vec<u8>,
+
+    reputation_score: u32,
+}
 
 // use risc0_zkvm::serde::{from_slice, to_vec};
 
 fn main() {
-    // Make the prover.
-    // let method_code = std::fs::read(REPUTATION_ELF)
-    //     .expect("Method code should be present at the specified path; did you use the correct *_PATH constant?");
     let mut prover = Prover::new(REPUTATION_ELF).expect(
         "Prover should be constructed from valid method source code and corresponding method ID",
     );
 
-    let a: Vec<u8> = vec![0,1,2,3,4,5];
-    let b: u64 = 7;
-    let c: Vec<u8> = vec![0,1,2,3,4,5];
-    let d: Vec<u8> = vec![0,1,2,3,4,5];
-    let e: u64 = 9;
+    let args = Args::parse();
 
-
-    prover.add_input_u32_slice(&to_vec(&a).expect("should be serializable"));
-    prover.add_input_u32_slice(&to_vec(&b).expect("should be serializable"));
-    prover.add_input_u32_slice(&to_vec(&c).expect("should be serializable"));
-    prover.add_input_u32_slice(&to_vec(&d).expect("should be serializable"));
-    prover.add_input_u32_slice(&to_vec(&e).expect("should be serializable"));
-
+    prover.add_input_u8_slice(&args.commitment);
+    prover.add_input_u32_slice(&to_vec(&args.min_reputation).expect("should be serializable"));
+    prover.add_input_u32_slice(&to_vec(&args._private_key).expect("should be serializable"));
+    prover.add_input_u8_slice(&args.nullifier);
+    prover.add_input_u32_slice(&to_vec(&args.reputation_score).expect("should be serializable"));
 
     // Run prover & generate receipt
     let receipt = prover.run()
@@ -45,16 +51,9 @@ fn main() {
         "Code you have proven should successfully verify; did you specify the correct method ID?",
     );
 
-    // let ink_risk0_verifier = InkRisk0Verifier::new(REVIEW_ID.into());
-    // assert!(ink_risk0_verifier.verify(journal, seal).is_ok());
-
-
-    // TODO: Implement code for transmitting or serializing the receipt for other parties to verify here
-
-    println!("Done.");
-
+    // TODO: Use subxt to submit a transaction on chain
+    println!("receipt: {:?}", receipt);
 }
-
 
 // let mut prover =
 // Prover::new(REVIEW_ELF).expect("Prover should be constructed from valid ELF binary");
