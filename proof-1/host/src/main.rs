@@ -29,9 +29,6 @@ fn main() {
     let e: u64 = 9;
     
 
-
-
-
     prover.add_input_u32_slice(&to_vec(&a).expect("should be serializable"));
     prover.add_input_u32_slice(&to_vec(&b).expect("should be serializable"));
     prover.add_input_u32_slice(&to_vec(&c).expect("should be serializable"));

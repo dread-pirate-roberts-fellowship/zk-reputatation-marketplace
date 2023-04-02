@@ -18,6 +18,11 @@
 use risc0_zkvm::guest::env;
 
 risc0_zkvm::guest::entry!(main);
+use risc0_zkvm::sha::{Impl, Sha256};
+
+use serde::{Deserialize, Serialize};
+
+
 
 type Hash = [u8; 32];
 type Nullifier = Hash;
@@ -26,12 +31,11 @@ type ReputationScore = u64;
 
 
 
-/// Public journal values that will be committed by the image crop method.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Output {
-    pub reputation_change: Vec<u8>,
-    pub old_nullifier: u64,
-    pub new_commitment: u64,
+    pub reputation_change: i8,
+    pub old_nullifier: Nullifier,
+    pub new_commitment: Commitment,
 }
 
 
@@ -44,12 +48,11 @@ pub fn main() {
 
     // Private inputes:
     // For now no private key for decryption of reputation change
-    let old_reputation_score: ReputationScore = env::read();
+    let old_reputation_score: u64 = env::read();
     let new_nullifier: Nullifier = env::read();
 
-    // TODO:
-    // New reputation score = Old_reputation_score + decrypt(encrypted_reputation)
-    let new_reputation_score = old_reputation_score + reputation_change;
+
+    let new_reputation_score = old_reputation_score + reputation_change as u64;
 
     let mut x = new_reputation_score.to_le_bytes().to_vec();
     new_nullifier.append(&mut x);
@@ -60,7 +63,12 @@ pub fn main() {
         panic!("commitment not according to nullifier and rep_score")
     }
 
-    // commitment_new= hash(nullifier+new_reputation_score)
-    todo!();
-    env::commit(&42);
+    let output = Output {
+        reputation_change: reputation_change,
+        old_nullifier: old_nullifier,
+        new_commitment: new_commitment
+    };
+
+    env::commit(&output);
+
 }

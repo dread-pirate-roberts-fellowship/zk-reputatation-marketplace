@@ -5,6 +5,9 @@ edition = "2021"
 
 [build-dependencies]
 risc0-build = "0.14"
+risc0-zkvm = { version = "0.14" }
+serde = "1.0"
+
 
 [package.metadata.risc0]
 methods = ["guest"]

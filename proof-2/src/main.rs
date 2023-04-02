@@ -12,19 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use factors_methods::{MULTIPLY_ELF, MULTIPLY_ID};
-use risc0_zkvm::{
-    serde::{from_slice, to_vec},
-    Prover,
-};
+//use factors_methods::{MULTIPLY_ELF, MULTIPLY_ID};
+// use risc0_zkvm::{
+//     serde::{from_slice, to_vec},
+//     Prover,
+// };
+use serde::{Deserialize, Serialize};
+
+use risc0_zkvm::sha::{Impl, Sha256};
+
+
 
 fn main() {
 
-    let a: i8 = vec![0,1,2,3,4,5];
-    let b: [u8; 32] = 7;
-    let c: [u8; 32] = vec![0,1,2,3,4,5];
-    let d: u64 = vec![0,1,2,3,4,5];
-    let e: [u8; 32] = 9;
+    let a: i8 = 0; // reputation change
+    let b: [u8; 32] = Impl::hash_bytes(&[123]); // old nullifier
+    let c: [u8; 32] = Impl::hash_bytes(&[1234]) // new commitment
+    let d: u64 = 4; // old reputation score
+    let e: [u8; 32] = Impl::hash_bytes(&[123]); // new nullifier
 
     // Multiply them inside the ZKP
     // First, we make the prover, loading the 'multiply' method
