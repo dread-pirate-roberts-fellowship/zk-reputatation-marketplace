@@ -14,6 +14,10 @@ mod marketplace {
 
     use ink_risc0_verifier::InkRisc0VerifierRef;
 
+    const PROOF_1: [u32; 8] = proof1::REPUTATION_ID;
+    // TODO: rename
+    const PROOF_2: [u32; 8] = proof2::MULTIPLY_ID;
+
     type ItemId = u32;
     type Reputation = u32;
     // type ReputationChange = i8;
@@ -86,10 +90,6 @@ mod marketplace {
     pub struct ItemBought {
         seller_id: AccountId,
     }
-
-    // TODO
-    const PROOF_1: [u32; 8] = [0; 8];
-    const PROOF_2: [u32; 8] = [0; 8];
 
     impl Marketplace {
         /// Constructor that initializes the marketplace
@@ -227,9 +227,6 @@ mod marketplace {
         }
     }
 
-    /// Unit tests in Rust are normally defined within such a `#[cfg(test)]`
-    /// module and test functions are marked with a `#[test]` attribute.
-    /// The below code is technically just normal Rust code.
     #[cfg(test)]
     mod tests {
         /// Imports all the definitions from the outer scope so we can use them here.

@@ -5,8 +5,8 @@ edition = "2021"
 
 [dependencies]
 methods = { path = "../methods" }
-risc0-zkvm = { version = "0.14", default-features = false, features = ["prove"] }
-serde = "1.0"
+risc0-zkvm = { version = "0.14", default-features = false }
+serde = { version = "1.0", default-features = false }
 
 [features]
-prove = []
+prove = ["risc0-zkvm/prove"]

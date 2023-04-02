@@ -28,12 +28,13 @@ type Hash = [u8; 32];
 type Nullifier = Hash;
 type Commitment = Hash;
 type ReputationScore = u64;
+type ReputationChange = i8;
 
 
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Output {
-    pub reputation_change: i8,
+    pub reputation_change: ReputationChange,
     pub old_nullifier: Nullifier,
     pub new_commitment: Commitment,
 }
@@ -42,20 +43,20 @@ pub struct Output {
 pub fn main() {
     // Public inputes:
     // For now reputation change is unencrypted
-    let reputation_change: i8 = env::read();
+    let reputation_change: ReputationChange = env::read();
     let old_nullifier: Nullifier = env::read();
     let new_commitment: Commitment = env::read();
 
     // Private inputes:
     // For now no private key for decryption of reputation change
-    let old_reputation_score: u64 = env::read();
+    let old_reputation_score: ReputationScore = env::read();
     let new_nullifier: Nullifier = env::read();
+    let mut new_nullifier = new_nullifier.to_vec();
 
 
     let new_reputation_score = old_reputation_score + reputation_change as u64;
 
-    let mut x = new_reputation_score.to_le_bytes().to_vec();
-    new_nullifier.append(&mut x);
+    new_nullifier.extend(new_reputation_score.to_le_bytes());
 
     let sha = Impl::hash_bytes(&new_nullifier.as_slice());
 

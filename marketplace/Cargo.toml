@@ -14,6 +14,9 @@ scale-info = { version = "2.3", default-features = false, features = ["derive"],
 
 ink_risc0_verifier = { path = "../ink_risc0_verifier", default-features = false, features = ["ink-as-dependency"] }
 
+proof1 = { package = "methods", path = "../proof-1/methods", default-features = false }
+proof2 = { package = "factors-methods", path = "../proof-2/methods", default-features = false }
+
 [dev-dependencies]
 ink_e2e = "4.0.1"
 
