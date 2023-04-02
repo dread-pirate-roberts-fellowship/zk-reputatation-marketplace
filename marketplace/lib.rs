@@ -3,25 +3,50 @@
 #[ink::contract]
 mod marketplace {
 
-    use risc0_zkvm::sha::Digest;
+    // TODO: use Poseidon2
+    use risc0_zkvm::sha::{Digest, Impl, Sha256};
 
     use ink::{
-        prelude::{collections::BTreeSet, string::String, string::ToString, vec::Vec},
+        prelude::{collections::BTreeSet, string::String, vec::Vec},
         storage::Mapping,
         LangError,
     };
 
-    #[ink(storage)]
+    type ItemId = u32;
+    type Reputation = u32;
+    // type ReputationChange = i8;
+    type Price = u128;
+    type Nullifier = Vec<u8>;
 
+    #[ink(storage)]
     pub struct Marketplace {
-        /// List of all users.
-        users: Vec<UserProfile>,
-        /// List of all assets.
-        assets: Vec<Asset>,
-        current_sale: Sale,
-        /// Mapping between Hash and bool
-        spent_nullifier: Mapping<Hash, bool>,
+        items: Mapping<ItemId, Item>,
+        // Only one open sale per account id is allowed.
+        // The account ids are pseudonomous.
+        ongoing_sales: Mapping<AccountId, Sale>,
+        // A nullifier is a just a temp private key
+        spent_nullifiers: Mapping<Nullifier, bool>,
+        // Sellers commit to new nullifiers
+        // Commitments are to hash(nullifier_new + reputation_score)
         commitments: BTreeSet<Hash>,
+        last_item_id: ItemId,
+    }
+
+    #[derive(scale::Decode, scale::Encode)]
+    #[cfg_attr(
+        feature = "std",
+        derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+    )]
+    pub enum SaleStatus {
+        /// The sale has been opened.
+        Open { price: Price },
+        /// The item has been purchased, but no review published yet.
+        FundsTransfered { buyer_id: AccountId },
+        /// Item purchased, review published.
+        Closed {
+            // TODO: actually use encryption
+            encrypted_reputation_change: Vec<u8>,
+        },
     }
 
     #[derive(scale::Decode, scale::Encode)]
@@ -30,10 +55,9 @@ mod marketplace {
         derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
     )]
     pub struct Sale {
-        status: String, //Write like an enum after
-        price: u128,
-        asset_id: u32,
-        // seller_reputation - pending reputation to add in a way
+        item_id: ItemId,
+        status: SaleStatus,
+        seller_id: AccountId,
     }
 
     #[derive(scale::Decode, scale::Encode)]
@@ -41,22 +65,10 @@ mod marketplace {
         feature = "std",
         derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
     )]
-    pub struct UserProfile {
-        account_id: AccountId,
-        reputation: u32,
-    }
-
-    #[derive(scale::Decode, scale::Encode)]
-    #[cfg_attr(
-        feature = "std",
-        derive(Debug, scale_info::TypeInfo, ink::storage::traits::StorageLayout)
-    )]
-    pub struct Asset {
-        id: u32,
-        account_owner: AccountId, // No direct account, can be offuscated
+    pub struct Item {
+        account_owner: AccountId, // Temporary address
         name: String,
         description: Vec<u8>,
-        purchasable: bool,
     }
 
     /// Event emitted when an iten is put on sale
@@ -74,73 +86,127 @@ mod marketplace {
     impl Marketplace {
         /// Constructor that initializes the marketplace
         #[ink(constructor)]
-        pub fn new(assets_list: Vec<Asset>, users_list: Vec<UserProfile>) -> Self {
-            let init_sale = Sale {
-                status: "Closed".to_string(),
-                price: 0,
-                asset_id: 10,
-            };
-            let mk = Self {
-                users: Vec::new(),
-                assets: assets_list,
-                current_sale: init_sale,
+        pub fn new() -> Self {
+            Self {
+                items: Mapping::new(),
+                ongoing_sales: Mapping::new(),
+                spent_nullifiers: Mapping::new(),
                 commitments: BTreeSet::new(),
-                spent_nullifier: Mapping::new(),
-            };
-            mk
-        }
-
-        #[ink(message)]
-        ///Register new seller
-        pub fn register_seller(&mut self, new_hash: Hash) {
-            self.commitments.insert(new_hash);
-        }
-
-        /// Modify Item on Sale
-        pub fn put_asset_on_sale(
-            mut self,
-            mut asset: Asset,
-            zk_proof: Digest,
-            account: AccountId,
-        ) -> Result<u32, LangError> {
-            if !asset.purchasable {
-                asset.purchasable = true;
-                let ongoing_sale = Sale {
-                    status: "OnGoing".to_string(),
-                    price: 0,
-                    asset_id: asset.id,
-                };
-                self.current_sale = ongoing_sale;
-                // Verify the proof of reputation
-                // Put nft in the contract, and set the price
-                // ybort abort if nullifier was spent
+                last_item_id: ItemId::default(),
             }
-            self.env().emit_event(ItemOnsale { seller_id: account });
-            // TODO: Add Result output
-            unimplemented!()
+        }
+
+        #[ink(constructor)]
+        pub fn default() -> Self {
+            Self::new()
+        }
+
+        /// Register new seller
+        #[ink(message)]
+        pub fn register_seller(&mut self, nullifier: Nullifier) {
+            // TODO: make nullifier private
+            // zkProof that reputation_score in the
+            // commitment (hash(nullifier + reputation_score))
+            // is zero. And the commitment is constructed this way.
+            let reputation = Reputation::default();
+            let mut bytes = nullifier;
+            bytes.extend(reputation.to_le_bytes());
+
+            // TODO: extract the convertion into a util fn
+            let boxed = Impl::hash_bytes(&bytes);
+            let unboxed = *boxed;
+            let as_array: [u8; 32] = unboxed.into();
+            let as_hash: Hash = as_array.into();
+
+            self.commitments.insert(as_hash);
+        }
+
+        /// Put new item on sale.
+        #[ink(message)]
+        pub fn put_item_on_sale(
+            &mut self,
+            item: Item,
+            price: Price,
+            zk_proof: [u32; 8],
+        ) -> Result<ItemId, LangError> {
+            let caller = self.env().caller();
+
+            if self.ongoing_sales.get(&caller).is_some() {
+                // TODO: proper error types
+                return Err(LangError::CouldNotReadInput);
+            }
+
+            let _zk_proof = Digest::from(zk_proof);
+            // TODO: verify zk_proof
+            // abort if nullifier was spent
+
+            let item_id = self.last_item_id;
+            self.last_item_id += 1;
+
+            let ongoing_sale = Sale {
+                status: SaleStatus::Open { price },
+                item_id,
+                seller_id: caller,
+            };
+
+            self.ongoing_sales.insert(caller, &ongoing_sale);
+            self.items.insert(item_id, &item);
+
+            self.env().emit_event(ItemOnsale { seller_id: caller });
+            Ok(item_id)
         }
 
         #[ink(message)]
-        pub fn buy_asset(&mut self, asset: Asset, account: AccountId, final_price: u128) {
-            ink::env::debug_println!("final price: {}", final_price);
-            ink::env::debug_println!("contract balance: {}", self.env().balance());
-            assert!(final_price <= self.env().balance(), "insufficient funds!");
-            // transfer of the account Id to the asset
-            self.env().emit_event(ItemBought { seller_id: account });
+        pub fn buy_item(&mut self, _item_id: ItemId) -> Result<(), LangError> {
+            let caller = self.env().caller();
+            // TODO: check balance of account
+            // check the sale status
+            self.env().emit_event(ItemBought { seller_id: caller });
+            Ok(())
         }
 
         #[ink(message)]
-        pub fn give_seller_review(&mut self, seller: AccountId, encrypted_change: Vec<u8>) {
-            //TODO: Check sellerId
-            //Update seller review
-            self.env().emit_event(ItemBought { seller_id: seller });
+        pub fn give_seller_review(
+            &mut self,
+            seller_id: AccountId,
+            encrypted_reputation_change: Vec<u8>,
+        ) -> Result<(), LangError> {
+            let caller = self.env().caller();
+
+            match self.ongoing_sales.get(&seller_id) {
+                Some(mut sale) => match sale.status {
+                    SaleStatus::FundsTransfered { buyer_id } if buyer_id == caller => {
+                        sale.status = SaleStatus::Closed {
+                            encrypted_reputation_change,
+                        };
+                        self.ongoing_sales.insert(seller_id, &sale);
+                    }
+                    _ => return Err(LangError::CouldNotReadInput),
+                },
+                _ => return Err(LangError::CouldNotReadInput),
+            }
+
+            self.env().emit_event(ItemBought { seller_id });
+            Ok(())
         }
 
         #[ink(message)]
-        pub fn update_seller_reputation(&self, hash: Hash, review_proof: [u32; 8]) {
-            let review_proof = Digest::from(review_proof);
-            unimplemented!()
-            //TBD
+        pub fn update_seller_reputation(
+            &mut self,
+            _old_nullifier: Nullifier,
+            new_commitment: Hash,
+            review_proof: [u32; 8],
+        ) -> Result<(), LangError> {
+            let _review_proof = Digest::from(review_proof);
+
+            // TODO: check review_proof using proof-2
+            // Nullify the old commitment
+
+            // TODO: Change the reputation
+
+            self.commitments.insert(new_commitment);
+
+            Ok(())
         }
     }
 
@@ -155,17 +221,14 @@ mod marketplace {
         /// We test if the default constructor does its job.
         #[ink::test]
         fn default_works() {
-            let marketplace = Marketplace::default();
-            assert_eq!(marketplace.get(), false);
+            let _marketplace = Marketplace::default();
         }
 
         /// We test a simple use case of our contract.
         #[ink::test]
         fn it_works() {
-            let mut marketplace = Marketplace::new(false);
-            assert_eq!(marketplace.get(), false);
-            marketplace.flip();
-            assert_eq!(marketplace.get(), true);
+            let mut _marketplace = Marketplace::new();
+            // TODO
         }
     }
 
