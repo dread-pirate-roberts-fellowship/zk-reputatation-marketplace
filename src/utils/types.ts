@@ -5,6 +5,12 @@ export interface itemType {
   name: string;
   long_desc: string;
   pic: string;
-  status: "open" | "bought" | "sold" | "reviewed";
+  status:
+    | "open"
+    | "bought"
+    | "sold"
+    | "gaveReview"
+    | "receivedReview"
+    | "reviewExpired";
   review?: number;
 }

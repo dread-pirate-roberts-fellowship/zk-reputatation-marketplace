@@ -67,10 +67,12 @@ export const Item = ({ item }: { item: itemType }) => {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {item.status == "sold" ? (
+      {item.status == "sold" ||
+      item.status == "receivedReview" ||
+      item.status == "reviewExpired" ? (
         <Text marginBottom={"5px"}>Sold:</Text>
       ) : (
-        (item.status == "bought" || item.status == "reviewed") && (
+        (item.status == "bought" || item.status == "gaveReview") && (
           <Text marginBottom={"5px"}>Bought:</Text>
         )
       )}
@@ -104,7 +106,7 @@ export const Item = ({ item }: { item: itemType }) => {
           {item.long_desc}
         </Text>
       </Box>
-      {item.status == "bought" && (
+      {item.status == "bought" ? (
         <>
           <Divider />
           <Box
@@ -115,10 +117,9 @@ export const Item = ({ item }: { item: itemType }) => {
             alignItems={"center"}
           >
             <Button onClick={onOpen}>Review now</Button>
-          </Box>{" "}
+          </Box>
         </>
-      )}
-      {item.status == "reviewed" && (
+      ) : item.status == "sold" ? (
         <>
           <Divider />
           <Box
@@ -128,16 +129,73 @@ export const Item = ({ item }: { item: itemType }) => {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            <Text>Your review:</Text>
-            {[1, 2, 3, 4, 5].map((index) => (
-              <Icon
-                as={item.review! >= index ? MdStar : MdStarOutline}
-                h={5}
-                w={5}
-              />
-            ))}
+            <Text>
+              Please wait for the buyer to review before claiming your funds.
+              They have 10 days for this.
+            </Text>
           </Box>
         </>
+      ) : item.status == "gaveReview" ? (
+        <>
+          <Divider />
+          <Box
+            padding="10px"
+            flexDir={"column"}
+            display="flex"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Text marginBottom={"5px"}>You gave:</Text>
+            <Box display="flex" flexDir={"row"} marginBottom={"5px"}>
+              {[1, 2, 3, 4, 5].map((index) => (
+                <Icon
+                  as={item.review! >= index ? MdStar : MdStarOutline}
+                  h={5}
+                  w={5}
+                />
+              ))}
+            </Box>
+          </Box>
+        </>
+      ) : item.status == "receivedReview" ? (
+        <>
+          <Divider />
+          <Box
+            padding="10px"
+            flexDir={"column"}
+            display="flex"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Text marginBottom={"5px"}>You received:</Text>
+            <Box display="flex" flexDir={"row"} marginBottom={"5px"}>
+              {[1, 2, 3, 4, 5].map((index) => (
+                <Icon
+                  as={item.review! >= index ? MdStar : MdStarOutline}
+                  h={5}
+                  w={5}
+                />
+              ))}
+            </Box>
+            <Button onClick={() => {}}>Claim your funds</Button>
+          </Box>
+        </>
+      ) : (
+        item.status == "reviewExpired" && (
+          <>
+            <Divider />
+            <Box
+              padding="10px"
+              flexDir={"column"}
+              display="flex"
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Text marginBottom={"5px"}>The review time expired.</Text>
+              <Button onClick={() => {}}>Claim your funds</Button>
+            </Box>
+          </>
+        )
       )}
     </Box>
   );

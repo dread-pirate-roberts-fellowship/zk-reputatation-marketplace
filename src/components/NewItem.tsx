@@ -15,13 +15,12 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import axios from "axios";
 
 const pinata_jwt =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiI5ZjIyNDczMS1kYTQyLTQwNGUtOGZiYS1lMjlmZDQ3Y2Y1MDciLCJlbWFpbCI6Ind5aGFpbmVzQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJwaW5fcG9saWN5Ijp7InJlZ2lvbnMiOlt7ImlkIjoiRlJBMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfSx7ImlkIjoiTllDMSIsImRlc2lyZWRSZXBsaWNhdGlvbkNvdW50IjoxfV0sInZlcnNpb24iOjF9LCJtZmFfZW5hYmxlZCI6ZmFsc2UsInN0YXR1cyI6IkFDVElWRSJ9LCJhdXRoZW50aWNhdGlvblR5cGUiOiJzY29wZWRLZXkiLCJzY29wZWRLZXlLZXkiOiJlNGE4NWE1NTUxMjg0NDgzYWUzZiIsInNjb3BlZEtleVNlY3JldCI6ImMyMzJlNTYxY2Q2NmFiZWQxMGJiNDVjMjQ0MGU2M2MxNTIxMWI0ODUxMjYxYzQ2OWNhYjBiYzQzMzNjZGJmY2UiLCJpYXQiOjE2ODAzNzkwOTZ9.mVF3h5gtgryDN2fdrsiIZ7DTSqDrQzNAB2cO5qLjnRk";
 
 const AddItemForm = (props) => {
-  const axios = require("axios");
-
   const [item_name, setItemName] = useState(null);
   const handleItemNameChange = (e: any) => setItemName(e.target.value);
   const isItemError = item_name === "";
@@ -143,7 +142,6 @@ const AddItemForm = (props) => {
 
 export const NewItemButton = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
     <>
       <Button onClick={onOpen}>New item</Button>
@@ -153,7 +151,6 @@ export const NewItemButton = () => {
           <ModalHeader>Add Item to Sell</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            I am some content. If I were real content, you would know.
             <AddItemForm doClose={onClose} />
           </ModalBody>
         </ModalContent>
