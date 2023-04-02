@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+clap = { version = "4.2.1", features = ["derive"] }
 methods = { path = "../methods" }
 risc0-zkvm = { version = "0.14", default-features = false }
 serde = { version = "1.0", default-features = false }
