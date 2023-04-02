@@ -4,7 +4,8 @@
 mod marketplace {
 
     // TODO: use Poseidon2
-    use risc0_zkvm::sha::{Digest, Impl, Sha256};
+    use risc0_zkvm::sha::{Impl, Sha256};
+    // use risc0_zkvm::receipt::Receipt;
 
     use ink::{
         prelude::{collections::BTreeSet, string::String, vec::Vec},
@@ -144,7 +145,7 @@ mod marketplace {
             &mut self,
             item: Item,
             price: Price,
-            zk_proof: [u32; 8],
+            zk_proof: (Vec<u8>, Vec<u32>),
         ) -> Result<ItemId, LangError> {
             let caller = self.env().caller();
 
@@ -153,8 +154,11 @@ mod marketplace {
                 return Err(LangError::CouldNotReadInput);
             }
 
-            let _zk_proof = Digest::from(zk_proof);
-            // TODO: verify zk_proof
+            let journal = zk_proof.0.clone();
+            self.risc0_verifier_1
+                .verify(zk_proof.0, zk_proof.1)
+                .map_err(|_| LangError::CouldNotReadInput)?;
+
             // abort if nullifier was spent
 
             let item_id = self.last_item_id;
@@ -212,12 +216,13 @@ mod marketplace {
             &mut self,
             _old_nullifier: Nullifier,
             new_commitment: Hash,
-            review_proof: [u32; 8],
+            review_proof: (Vec<u8>, Vec<u32>),
         ) -> Result<(), LangError> {
-            let _review_proof = Digest::from(review_proof);
+            self.risc0_verifier_2
+                .verify(review_proof.0, review_proof.1)
+                .map_err(|_| LangError::CouldNotReadInput)?;
 
-            // TODO: check review_proof using proof-2
-            // Nullify the old commitment
+            // TODO: Nullify the old commitment
 
             // TODO: Change the reputation
 

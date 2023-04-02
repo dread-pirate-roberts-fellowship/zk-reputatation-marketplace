@@ -1,5 +1,3 @@
-// TODO: Rename this file to change the name of this method from METHOD_NAME
-
 #![no_main]
 #![no_std]
 
@@ -18,18 +16,18 @@ use alloc::vec::Vec;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Output {
     pub commitment: Vec<u8>,
-    pub min_reputation: u64,
+    pub min_reputation: u32,
 }
 
 pub fn main() {
     // public inputs
     let commitment: Vec<u8> = env::read();
-    let min_reputation: u64 = env::read();
+    let min_reputation: u32 = env::read();
 
     // private inputs
     let _p_key: Vec<u8>  = env::read();
     let mut nullifier: Vec<u8>  = env::read();
-    let reputation_score: u64 = env::read();
+    let reputation_score: u32 = env::read();
 
 
     let mut x = reputation_score.to_le_bytes().to_vec();

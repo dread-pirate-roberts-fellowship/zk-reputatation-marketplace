@@ -1,17 +1,3 @@
-// Copyright 2023 RISC Zero, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #![no_main]
 #![no_std]
 
@@ -27,7 +13,7 @@ use serde::{Deserialize, Serialize};
 type Hash = [u8; 32];
 type Nullifier = Hash;
 type Commitment = Hash;
-type ReputationScore = u64;
+type ReputationScore = u32;
 type ReputationChange = i8;
 
 
@@ -53,8 +39,12 @@ pub fn main() {
     let new_nullifier: Nullifier = env::read();
     let mut new_nullifier = new_nullifier.to_vec();
 
-
-    let new_reputation_score = old_reputation_score + reputation_change as u64;
+    let new_reputation_score = i64::from(old_reputation_score) + i64::from(reputation_change);
+    if new_reputation_score > i64::from(u32::max_value()) {
+        u32::max_value()
+    } else {
+        u32::try_from(new_reputation_score).unwrap_or(0)
+    };
 
     new_nullifier.extend(new_reputation_score.to_le_bytes());
 
