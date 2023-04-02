@@ -24,6 +24,8 @@ default = ["std"]
 std = [
     "ink/std",
     "scale/std",
+    "risc0-zkvm/std",
+    "risc0-zkp/std",
     "scale-info/std",
 ]
 prove = ["risc0-zkvm/prove"]
