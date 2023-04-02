@@ -1,4 +1,4 @@
-// TODO: Update the name of the method loaded by the prover. E.g., if the method is `multiply`, replace `METHOD_NAME_ID` with `MULTIPLY_ID` and replace `METHOD_NAME_PATH` with `MULTIPLY_PATH`
+// TODO: Update the name of the method loaded by the prover. E.g., if the method is `review`, replace `METHOD_NAME_ID` with `REVIEW_ID` and replace `METHOD_NAME_PATH` with `REVIEW_PATH`
 use methods::{REPUTATION_ID, REPUTATION_ELF};
 
 extern crate alloc;
@@ -8,7 +8,7 @@ use risc0_zkvm::{
     serde::{from_slice, to_vec},
     prove::Prover,
 };
-// use factors_methods::{MULTIPLY_ELF, MULTIPLY_ID};
+// use factors_methods::{REVIEW_ELF, REVIEW_ID};
 // use risc0_zkvm::{prove::Prover, serde::to_vec};
 
 
@@ -27,7 +27,7 @@ fn main() {
     let c: Vec<u8> = vec![0,1,2,3,4,5];
     let d: Vec<u8> = vec![0,1,2,3,4,5];
     let e: u64 = 9;
-    
+
 
     prover.add_input_u32_slice(&to_vec(&a).expect("should be serializable"));
     prover.add_input_u32_slice(&to_vec(&b).expect("should be serializable"));
@@ -45,7 +45,7 @@ fn main() {
         "Code you have proven should successfully verify; did you specify the correct method ID?",
     );
 
-    // let ink_risk0_verifier = InkRisk0Verifier::new(MULTIPLY_ID.into());
+    // let ink_risk0_verifier = InkRisk0Verifier::new(REVIEW_ID.into());
     // assert!(ink_risk0_verifier.verify(journal, seal).is_ok());
 
 
@@ -57,6 +57,6 @@ fn main() {
 
 
 // let mut prover =
-// Prover::new(MULTIPLY_ELF).expect("Prover should be constructed from valid ELF binary");
+// Prover::new(REVIEW_ELF).expect("Prover should be constructed from valid ELF binary");
 
 // // Next we send a & b to the guest

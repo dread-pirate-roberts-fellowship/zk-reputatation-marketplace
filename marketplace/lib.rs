@@ -17,7 +17,7 @@ mod marketplace {
 
     const PROOF_1: [u32; 8] = proof1::REPUTATION_ID;
     // TODO: rename
-    const PROOF_2: [u32; 8] = proof2::MULTIPLY_ID;
+    const PROOF_2: [u32; 8] = proof2::REVIEW_ID;
 
     type ItemId = u32;
     type Reputation = u32;
