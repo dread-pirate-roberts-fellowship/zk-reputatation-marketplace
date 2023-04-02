@@ -61,12 +61,13 @@ const AddItemForm = (props) => {
       },
     });
 
-    var config = {
-      method: "post",
-      url: "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + pinata_jwt,
+    
+    let config = {
+      method: 'post',
+      url: 'https://api.pinata.cloud/pinning/pinJSONToIPFS',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': "Bearer " + pinata_jwt
       },
       data: data,
     };
@@ -77,6 +78,18 @@ const AddItemForm = (props) => {
 
     const ipfs_hash = res.data.IpfsHash;
     props.doClose();
+  };
+
+  const doFetch = (hash) => {
+    let config = {
+      method: 'get',
+      url: 'https://gateway.pinata.cloud/ipfs/' + hash,
+    };
+
+    const res = axios(config);
+    console.log(res.data);
+
+    return res.data;
   };
 
   return (
