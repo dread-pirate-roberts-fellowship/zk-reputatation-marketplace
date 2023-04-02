@@ -1,27 +1,29 @@
 import { Box, Spinner } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import x, { useContract } from "useink";
 import { Item } from "../components/Item";
-import { items } from "../utils/helpers";
 import { itemType } from "../utils/types";
+import metadata from "../../marketplace/target/ink/marketplace.json";
+import { FakeItemContext } from "../utils/fake";
+
+const address = "nif";
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
-  const [items, setItems] = useState([] as itemType[]);
-  useEffect(() => {}, []);
-  if (!loading) {
-    return (
-      <Box
-        flexDir={"row"}
-        flexWrap="wrap"
-        display={"flex"}
-        justifyContent="space-between"
-      >
-        {items.map((item, index) => (
-          <Item item={item} key={index} />
+  const items = useContext(FakeItemContext);
+  return (
+    <Box
+      flexDir={"row"}
+      flexWrap="wrap"
+      display={"flex"}
+      justifyContent="space-between"
+    >
+      {items
+        .filter((item) => item.status == "open")
+        .map((item, index) => (
+          <Box maxW="300px">
+            <Item item={item} key={index} />
+          </Box>
         ))}
-      </Box>
-    );
-  } else {
-    return <Spinner />;
-  }
+    </Box>
+  );
 }

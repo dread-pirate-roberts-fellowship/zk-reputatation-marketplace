@@ -15,14 +15,19 @@ import {
   Tabs,
   Text,
   useToast,
+  Icon,
 } from "@chakra-ui/react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { items } from "../../utils/helpers";
+import { useContext, useEffect, useState } from "react";
+import { MdStar, MdStarOutline } from "react-icons/md";
+import { FakeItemContext, FakeItemDispatchContext } from "../../utils/fake";
 
 const ItemDetails: NextPage = () => {
-  function buy() {}
+  const toast = useToast();
+
+  const dispatch = useContext(FakeItemDispatchContext);
+  const items = useContext(FakeItemContext);
   const router = useRouter();
   const { name } = router.query;
   const item = items.find((item) => item.name == name);
@@ -35,22 +40,19 @@ const ItemDetails: NextPage = () => {
         flexDir={"row"}
         boxShadow={"dark-lg"}
       >
-        <Box>
-          <Box
-            minW="400px"
-            backgroundColor="blue"
-            sx={{
-              position: "sticky",
-              top: "0",
-            }}
-          >
-            <Image
-              src={item.pic}
-              alt="token"
-              width="100%"
-              objectFit={"contain"}
-            />
-          </Box>
+        <Box
+          minW="400px"
+          sx={{
+            position: "sticky",
+            top: "0",
+          }}
+        >
+          <Image
+            src={item.pic}
+            alt="token"
+            width="100%"
+            objectFit={"contain"}
+          />
         </Box>
         <Box
           flexDirection="row"
@@ -92,12 +94,15 @@ const ItemDetails: NextPage = () => {
               </Box>
               <Box flexDir={"column"} marginLeft="5px">
                 <Text fontWeight={"bold"}>{item.reputationQuantity}</Text>
-                <Text
-                  fontWeight={"bold"}
-                  textColor={item.reputationQuality > 7 ? "green" : "orange"}
-                >
-                  {item.reputationQuality}
-                </Text>
+                {[1, 2, 3, 4, 5].map((index) => (
+                  <Icon
+                    as={
+                      item.reputationQuality! >= index ? MdStar : MdStarOutline
+                    }
+                    h={5}
+                    w={5}
+                  />
+                ))}
               </Box>
             </Box>
           </Box>
@@ -116,7 +121,22 @@ const ItemDetails: NextPage = () => {
               <Heading size="2xl">${item.price}</Heading>
             </Box>
             <Box>
-              <Button width={"200px"} onClick={() => buy()}>
+              <Button
+                width={"200px"}
+                onClick={() => {
+                  dispatch({
+                    type: "changedItem",
+                    value: { ...item, status: "bought" },
+                  });
+                  router.push("/");
+                  toast({
+                    title: "Bought!",
+                    description: "You are now a proud owner of " + item.name,
+                    status: "success",
+                    isClosable: true,
+                  });
+                }}
+              >
                 Buy
               </Button>
             </Box>

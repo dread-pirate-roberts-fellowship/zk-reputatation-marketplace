@@ -16,11 +16,14 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { MdStar, MdStarOutline } from "react-icons/md";
+import { FakeItemDispatchContext } from "../utils/fake";
 import { itemType } from "../utils/types";
 
 export const Item = ({ item }: { item: itemType }) => {
+  const dispatch = useContext(FakeItemDispatchContext);
+
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [review, setReview] = useState(0);
@@ -30,7 +33,7 @@ export const Item = ({ item }: { item: itemType }) => {
     <Box
       boxShadow={"2xl"}
       margin="5"
-      maxW="300px"
+      minW="300px"
       onClick={() => {
         item.status == "open" && router.push("/items/" + item.name);
       }}
@@ -63,26 +66,33 @@ export const Item = ({ item }: { item: itemType }) => {
             <Button variant="ghost" onClick={onClose}>
               Cancel
             </Button>
-            <Button>Review</Button>
+            <Button
+              onClick={() => {
+                dispatch({
+                  type: "changedItem",
+                  value: { ...item, status: "gaveReview", review: review },
+                });
+                onClose();
+              }}
+            >
+              Review
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
       {item.status == "sold" ||
       item.status == "receivedReview" ||
-      item.status == "reviewExpired" ? (
+      item.status == "reviewExpired" ||
+      item.status == "fundsClaimed" ? (
         <Text marginBottom={"5px"}>Sold:</Text>
       ) : (
         (item.status == "bought" || item.status == "gaveReview") && (
           <Text marginBottom={"5px"}>Bought:</Text>
         )
       )}
-      <Image
-        src={item.pic}
-        alt="token"
-        display={"flex"}
-        flex="1"
-        objectFit={"cover"}
-      />
+      <Box justifyContent={"center"} display="flex">
+        <Image src={item.pic} alt="token" objectFit={"contain"} />
+      </Box>
       <Box
         flexDir={"row"}
         justifyContent="space-between"
@@ -91,7 +101,9 @@ export const Item = ({ item }: { item: itemType }) => {
         alignItems={"center"}
       >
         <Box flexDir={"column"} display="flex" flex="1">
-          <Text fontSize={"2xl"}>{item.name}</Text>
+          <Text fontSize={"2xl"} noOfLines={1}>
+            {item.name}
+          </Text>
           <Text>Price: ${item.price}</Text>
         </Box>
       </Box>
@@ -113,7 +125,7 @@ export const Item = ({ item }: { item: itemType }) => {
             padding="10px"
             flexDir={"row"}
             display="flex"
-            justifyContent={"space-between"}
+            justifyContent={"center"}
             alignItems={"center"}
           >
             <Button onClick={onOpen}>Review now</Button>
@@ -177,13 +189,43 @@ export const Item = ({ item }: { item: itemType }) => {
                 />
               ))}
             </Box>
-            <Button onClick={() => {}}>
-              Update your reputation & claim your funds
+            <Button
+              onClick={() =>
+                dispatch({
+                  type: "changedItem",
+                  value: { ...item, status: "fundsClaimed" },
+                })
+              }
+            >
+              Update rep. & claim
+            </Button>
+          </Box>
+        </>
+      ) : item.status == "reviewExpired" ? (
+        <>
+          <Divider />
+          <Box
+            padding="10px"
+            flexDir={"column"}
+            display="flex"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            <Text marginBottom={"5px"}>The review time expired.</Text>
+            <Button
+              onClick={() => {
+                dispatch({
+                  type: "changedItem",
+                  value: { ...item, status: "fundsClaimed" },
+                });
+              }}
+            >
+              Claim your funds
             </Button>
           </Box>
         </>
       ) : (
-        item.status == "reviewExpired" && (
+        item.status == "fundsClaimed" && (
           <>
             <Divider />
             <Box
@@ -193,8 +235,7 @@ export const Item = ({ item }: { item: itemType }) => {
               justifyContent={"space-between"}
               alignItems={"center"}
             >
-              <Text marginBottom={"5px"}>The review time expired.</Text>
-              <Button onClick={() => {}}>Claim your funds</Button>
+              <Text marginBottom={"5px"}>You claimed the funds.</Text>
             </Box>
           </>
         )
